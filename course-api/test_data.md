@@ -5,10 +5,12 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ## 🎓 COURSE API ENDPOINTS
 
 ### 1. Create Course
+
 - **Method**: POST
 - **URL**: `/api/courses`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "code": "CS101",
@@ -19,20 +21,24 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### 2. Get All Courses
+
 - **Method**: GET
 - **URL**: `/api/courses`
 - **Headers**: None
 
 ### 3. Get Course by ID
+
 - **Method**: GET
 - **URL**: `/api/courses/{id}`
 - **Example**: `/api/courses/1`
 
 ### 4. Update Course
+
 - **Method**: PUT
 - **URL**: `/api/courses/{id}`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "code": "CS101",
@@ -43,6 +49,7 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### 5. Delete Course
+
 - **Method**: DELETE
 - **URL**: `/api/courses/{id}`
 
@@ -51,10 +58,12 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ## 👨‍🎓 STUDENT API ENDPOINTS
 
 ### 1. Create Student
+
 - **Method**: POST
 - **URL**: `/api/students`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "studentId": "STU2025001",
@@ -71,34 +80,41 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### 2. Get All Students
+
 - **Method**: GET
 - **URL**: `/api/students`
 
 ### 3. Get Student by ID
+
 - **Method**: GET
 - **URL**: `/api/students/{id}`
 
 ### 4. Get Student by Student ID
+
 - **Method**: GET
 - **URL**: `/api/students/student-id/{studentId}`
 - **Example**: `/api/students/student-id/STU2025001`
 
 ### 5. Update Student
+
 - **Method**: PUT
 - **URL**: `/api/students/{id}`
 - **Headers**: `Content-Type: application/json`
 - **Body**: Same as create student
 
 ### 6. Delete Student
+
 - **Method**: DELETE
 - **URL**: `/api/students/{id}`
 
 ### 7. Get Students by Department
+
 - **Method**: GET
 - **URL**: `/api/students/department/{department}`
 - **Example**: `/api/students/department/Computer Science`
 
 ### 8. Search Students
+
 - **Method**: GET
 - **URL**: `/api/students/search?keyword={keyword}`
 - **Example**: `/api/students/search?keyword=John`
@@ -108,10 +124,12 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ## 📝 ENROLLMENT API ENDPOINTS
 
 ### 1. Create Enrollment
+
 - **Method**: POST
 - **URL**: `/api/enrollments`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "studentId": 1,
@@ -122,36 +140,44 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### 2. Get All Enrollments
+
 - **Method**: GET
 - **URL**: `/api/enrollments`
 
 ### 3. Get Enrollment by ID
+
 - **Method**: GET
 - **URL**: `/api/enrollments/{id}`
 
 ### 4. Get Enrollments by Student ID
+
 - **Method**: GET
 - **URL**: `/api/enrollments/student/{studentId}`
 
 ### 5. Get Enrollments by Course ID
+
 - **Method**: GET
 - **URL**: `/api/enrollments/course/{courseId}`
 
 ### 6. Update Enrollment Status
+
 - **Method**: PUT
 - **URL**: `/api/enrollments/{id}/status?status={status}`
 - **Example**: `/api/enrollments/1/status?status=ACTIVE`
 - **Status Options**: `ACTIVE`, `DROPPED`, `COMPLETED`
 
 ### 7. Delete Enrollment
+
 - **Method**: DELETE
 - **URL**: `/api/enrollments/{id}`
 
 ### 8. Get Enrollment Count by Course
+
 - **Method**: GET
 - **URL**: `/api/enrollments/count/course/{courseId}`
 
 ### 9. Get Enrollment Count by Student
+
 - **Method**: GET
 - **URL**: `/api/enrollments/count/student/{studentId}`
 
@@ -160,10 +186,12 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ## 📊 GRADE API ENDPOINTS
 
 ### 1. Create Grade
+
 - **Method**: POST
 - **URL**: `/api/grades`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "enrollmentId": 1,
@@ -180,40 +208,49 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### 2. Get All Grades
+
 - **Method**: GET
 - **URL**: `/api/grades`
 
 ### 3. Get Grade by ID
+
 - **Method**: GET
 - **URL**: `/api/grades/{id}`
 
 ### 4. Get Grades by Enrollment ID
+
 - **Method**: GET
 - **URL**: `/api/grades/enrollment/{enrollmentId}`
 
 ### 5. Get Grades by Student ID
+
 - **Method**: GET
 - **URL**: `/api/grades/student/{studentId}`
 
 ### 6. Get Grades by Course ID
+
 - **Method**: GET
 - **URL**: `/api/grades/course/{courseId}`
 
 ### 7. Update Grade
+
 - **Method**: PUT
 - **URL**: `/api/grades/{id}`
 - **Headers**: `Content-Type: application/json`
 - **Body**: Same as create grade
 
 ### 8. Delete Grade
+
 - **Method**: DELETE
 - **URL**: `/api/grades/{id}`
 
 ### 9. Get Average Grade by Student
+
 - **Method**: GET
 - **URL**: `/api/grades/average/student/{studentId}`
 
 ### 10. Get Average Grade by Course
+
 - **Method**: GET
 - **URL**: `/api/grades/average/course/{courseId}`
 
@@ -222,6 +259,7 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ## 🧪 SAMPLE TEST DATA
 
 ### Course Data:
+
 ```json
 {
   "code": "CS102",
@@ -232,6 +270,7 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### Student Data:
+
 ```json
 {
   "studentId": "STU2025002",
@@ -248,9 +287,11 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ```
 
 ### Assessment Types for Grades:
+
 - `ASSIGNMENT`, `QUIZ`, `EXAM`, `PROJECT`, `PRESENTATION`, `LAB`, `PARTICIPATION`
 
 ### Enrollment Status Options:
+
 - `ACTIVE`, `DROPPED`, `COMPLETED`, `PENDING`
 
 ---
@@ -270,6 +311,7 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 ## ❌ ERROR RESPONSES
 
 All endpoints return structured error responses:
+
 ```json
 {
   "timestamp": "2025-08-31T10:00:00",
@@ -283,6 +325,7 @@ All endpoints return structured error responses:
 ```
 
 Common HTTP Status Codes:
+
 - `200` - Success
 - `201` - Created
 - `204` - No Content (for deletes)

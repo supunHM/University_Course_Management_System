@@ -340,6 +340,7 @@ Common HTTP Status Codes:
 ## 📚 COURSE OFFERINGS MANAGEMENT
 
 ### Step 1: Create Course Catalog
+
 ```json
 POST /api/courses
 {
@@ -351,11 +352,13 @@ POST /api/courses
 ```
 
 ### Step 2: View Available Courses
+
 ```
 GET /api/courses
 ```
 
 ### Step 3: Update Course Information
+
 ```json
 PUT /api/courses/1
 {
@@ -367,6 +370,7 @@ PUT /api/courses/1
 ```
 
 ### Step 4: Monitor Course Enrollment
+
 ```
 GET /api/enrollments/count/course/1
 GET /api/enrollments/course/1
@@ -379,6 +383,7 @@ GET /api/enrollments/course/1
 ### Complete Registration Process:
 
 #### 1. Register New Student
+
 ```json
 POST /api/students
 {
@@ -393,11 +398,13 @@ POST /api/students
 ```
 
 #### 2. Verify Student Registration
+
 ```
 GET /api/students/student-id/STU2025001
 ```
 
 #### 3. Enroll Student in Courses
+
 ```json
 POST /api/enrollments
 {
@@ -409,16 +416,19 @@ POST /api/enrollments
 ```
 
 #### 4. Check Registration Status
+
 ```
 GET /api/enrollments/student/1
 ```
 
 #### 5. Update Registration Status
+
 ```
 PUT /api/enrollments/1/status?status=ACTIVE
 ```
 
 ### Bulk Registration Queries:
+
 - **All Active Students**: `GET /api/students`
 - **Students by Department**: `GET /api/students/department/Computer Science`
 - **Student Course Load**: `GET /api/enrollments/count/student/1`
@@ -430,6 +440,7 @@ PUT /api/enrollments/1/status?status=ACTIVE
 ### Grade Entry Workflow:
 
 #### 1. Record Assignment Grades
+
 ```json
 POST /api/grades
 {
@@ -447,6 +458,7 @@ POST /api/grades
 ```
 
 #### 2. Record Exam Results
+
 ```json
 POST /api/grades
 {
@@ -464,18 +476,21 @@ POST /api/grades
 ```
 
 #### 3. View Student Performance
+
 ```
 GET /api/grades/student/1
 GET /api/grades/average/student/1
 ```
 
 #### 4. Analyze Course Performance
+
 ```
 GET /api/grades/course/1
 GET /api/grades/average/course/1
 ```
 
 #### 5. Update Grades (if needed)
+
 ```json
 PUT /api/grades/1
 {
@@ -494,18 +509,21 @@ PUT /api/grades/1
 ## 🔄 SEMESTER MANAGEMENT WORKFLOW
 
 ### Start of Semester:
+
 1. **Update Course Offerings**: Review and update course information
 2. **Open Registration**: Allow students to enroll in courses
 3. **Monitor Capacity**: Check enrollment counts per course
 4. **Generate Reports**: List students by course, department summaries
 
 ### During Semester:
+
 1. **Grade Entry**: Continuous assessment recording
 2. **Performance Monitoring**: Track student progress
 3. **Status Updates**: Manage drops, withdrawals
 4. **Progress Reports**: Generate student performance summaries
 
 ### End of Semester:
+
 1. **Final Grade Entry**: Record final assessments
 2. **Grade Verification**: Review and confirm all grades
 3. **Generate Transcripts**: Compile final results
@@ -516,16 +534,19 @@ PUT /api/grades/1
 ## 📈 REPORTING QUERIES
 
 ### Student Reports:
+
 - **Individual Transcript**: `GET /api/grades/student/{studentId}`
 - **Student Course History**: `GET /api/enrollments/student/{studentId}`
 - **Academic Performance**: `GET /api/grades/average/student/{studentId}`
 
 ### Course Reports:
+
 - **Class Roster**: `GET /api/enrollments/course/{courseId}`
 - **Grade Distribution**: `GET /api/grades/course/{courseId}`
 - **Course Average**: `GET /api/grades/average/course/{courseId}`
 
 ### Administrative Reports:
+
 - **Department Enrollment**: `GET /api/students/department/{department}`
 - **All Active Enrollments**: `GET /api/enrollments`
 - **System Overview**: `GET /api/courses`, `GET /api/students`
@@ -535,17 +556,21 @@ PUT /api/grades/1
 ## 🚨 COMMON MANAGEMENT SCENARIOS
 
 ### Scenario 1: Student Drops a Course
+
 ```
 PUT /api/enrollments/{enrollmentId}/status?status=DROPPED
 ```
 
 ### Scenario 2: Course Cancellation
+
 ```
 DELETE /api/courses/{courseId}
 ```
-*Note: Handle enrollments and grades first*
+
+_Note: Handle enrollments and grades first_
 
 ### Scenario 3: Grade Correction
+
 ```json
 PUT /api/grades/{gradeId}
 {
@@ -556,6 +581,7 @@ PUT /api/grades/{gradeId}
 ```
 
 ### Scenario 4: Student Transfer
+
 ```json
 PUT /api/students/{studentId}
 {
@@ -565,6 +591,7 @@ PUT /api/students/{studentId}
 ```
 
 ### Scenario 5: Bulk Grade Analysis
+
 1. Get all students in course: `GET /api/enrollments/course/{courseId}`
 2. For each enrollment, get grades: `GET /api/grades/enrollment/{enrollmentId}`
 3. Calculate statistics: `GET /api/grades/average/course/{courseId}`
@@ -578,12 +605,14 @@ PUT /api/students/{studentId}
 Your system needs **JWT-based authentication** with **role-based access control**:
 
 ### **User Roles:**
+
 - **ADMIN**: Full system access (manage courses, students, enrollments, grades)
 - **STUDENT**: Limited access (view courses, enroll, view own results)
 
 ## 🛠️ **Implementation Steps**
 
 ### Step 1: Add Dependencies to pom.xml
+
 ```xml
 <!-- Already added these dependencies -->
 <dependency>
@@ -610,6 +639,7 @@ Your system needs **JWT-based authentication** with **role-based access control*
 ```
 
 ### Step 2: Database Setup
+
 ```sql
 -- User table for authentication
 CREATE TABLE users (
@@ -629,10 +659,12 @@ CREATE TABLE users (
 ## 🔒 **Authentication Endpoints**
 
 ### 1. User Registration
+
 - **Method**: POST
 - **URL**: `/api/auth/register`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "username": "john.doe",
@@ -644,7 +676,9 @@ CREATE TABLE users (
   "studentId": "STU2025001"
 }
 ```
+
 - **Response**:
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -659,22 +693,27 @@ CREATE TABLE users (
 ```
 
 ### 2. User Login
+
 - **Method**: POST
 - **URL**: `/api/auth/login`
 - **Headers**: `Content-Type: application/json`
 - **Body**:
+
 ```json
 {
   "username": "john.doe",
   "password": "securePassword123"
 }
 ```
+
 - **Response**: Same as registration
 
 ### 3. Admin Registration
+
 - **Method**: POST
 - **URL**: `/api/auth/register`
 - **Body**:
+
 ```json
 {
   "username": "admin",
@@ -689,11 +728,13 @@ CREATE TABLE users (
 ## 🛡️ **Protected Endpoints**
 
 After authentication, include JWT token in headers:
+
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### **STUDENT Access:**
+
 - ✅ `GET /api/courses` - View all courses
 - ✅ `GET /api/courses/{id}` - View course details
 - ✅ `POST /api/enrollments` - Enroll in courses (own only)
@@ -705,6 +746,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - ❌ Cannot manage enrollments of other students
 
 ### **ADMIN Access:**
+
 - ✅ **ALL endpoints** - Complete system access
 - ✅ Create, update, delete courses
 - ✅ Manage all students and enrollments
@@ -714,6 +756,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ## 📋 **Testing Authentication Workflow**
 
 ### 1. Register Admin User
+
 ```json
 POST /api/auth/register
 {
@@ -727,6 +770,7 @@ POST /api/auth/register
 ```
 
 ### 2. Register Student User
+
 ```json
 POST /api/auth/register
 {
@@ -741,6 +785,7 @@ POST /api/auth/register
 ```
 
 ### 3. Login and Get Token
+
 ```json
 POST /api/auth/login
 {
@@ -750,6 +795,7 @@ POST /api/auth/login
 ```
 
 ### 4. Use Token for Protected Endpoints
+
 ```bash
 # Student viewing courses
 GET /api/courses
@@ -779,6 +825,7 @@ Headers: Authorization: Bearer {admin_token}
 ## 🔄 **Role-Based Workflow Examples**
 
 ### Student Workflow:
+
 1. **Register/Login** → Get JWT token
 2. **Browse Courses** → `GET /api/courses`
 3. **Enroll in Course** → `POST /api/enrollments`
@@ -787,6 +834,7 @@ Headers: Authorization: Bearer {admin_token}
 6. **Check GPA** → `GET /api/grades/average/student/{studentId}`
 
 ### Admin Workflow:
+
 1. **Register/Login** → Get JWT token
 2. **Create Courses** → `POST /api/courses`
 3. **Manage Students** → `POST /api/students`
@@ -797,16 +845,19 @@ Headers: Authorization: Bearer {admin_token}
 ## ⚠️ **Security Considerations**
 
 ### Token Security:
+
 - JWT tokens expire in 24 hours (configurable)
 - Include token in `Authorization: Bearer {token}` header
 - Store tokens securely in client applications
 
 ### Password Security:
+
 - Passwords are encrypted using BCrypt
 - Minimum password requirements should be enforced
 - Consider password reset functionality
 
 ### Access Control:
+
 - All endpoints except `/api/auth/**` require authentication
 - Role-based restrictions enforced at controller level
 - Students can only access their own data

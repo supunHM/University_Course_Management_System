@@ -1,6 +1,7 @@
 # 🔐 JWT Authentication Testing Guide with Postman
 
 ## 🚀 **Application Status**
+
 ✅ **Backend is Running**: `http://localhost:8080`
 ✅ **JWT Authentication**: Fully implemented with role-based access control
 ✅ **Database**: MySQL connected and operational
@@ -10,10 +11,12 @@
 ## 🔑 **Authentication System Overview**
 
 ### **User Roles**
+
 - **STUDENT**: Limited access (view courses, enroll, view own grades)
 - **ADMIN**: Full system access (manage courses, students, grades)
 
 ### **JWT Token Flow**
+
 1. **Register/Login** → Get JWT token
 2. **Add token to requests** → Include `Authorization: Bearer <token>`
 3. **Access protected endpoints** → Token validates user and role
@@ -23,9 +26,10 @@
 ## 📝 **Step 1: User Registration**
 
 ### **Register a STUDENT**
+
 - **Method**: `POST`
 - **URL**: `http://localhost:8080/api/auth/register`
-- **Headers**: 
+- **Headers**:
   ```
   Content-Type: application/json
   ```
@@ -43,9 +47,10 @@
   ```
 
 ### **Register an ADMIN**
+
 - **Method**: `POST`
 - **URL**: `http://localhost:8080/api/auth/register`
-- **Headers**: 
+- **Headers**:
   ```
   Content-Type: application/json
   ```
@@ -62,6 +67,7 @@
   ```
 
 ### **Expected Response**:
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huLmRvZSIsImV4cCI6MTcyNTMxMjAwMCwiaWF0IjoxNzI1MjI1NjAwfQ.signature",
@@ -80,9 +86,10 @@
 ## 🔓 **Step 2: User Login**
 
 ### **Login Request**
+
 - **Method**: `POST`
 - **URL**: `http://localhost:8080/api/auth/login`
-- **Headers**: 
+- **Headers**:
   ```
   Content-Type: application/json
   ```
@@ -95,6 +102,7 @@
   ```
 
 ### **Expected Response**:
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huLmRvZSIsImV4cCI6MTcyNTMxMjAwMCwiaWF0IjoxNzI1MjI1NjAwfQ.signature",
@@ -113,12 +121,15 @@
 ## 🛡️ **Step 3: Using JWT Token in Requests**
 
 ### **How to Add Authorization Header**
+
 For **ALL protected endpoints**, add this header:
+
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huLmRvZSIsImV4cCI6MTcyNTMxMjAwMCwiaWF0IjoxNzI1MjI1NjAwfQ.signature
 ```
 
 ### **In Postman**:
+
 1. Go to **Headers** tab
 2. Add Key: `Authorization`
 3. Add Value: `Bearer <your-actual-token>`
@@ -128,12 +139,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huLmRvZ
 ## 🎯 **Step 4: Testing Protected Endpoints**
 
 ### **Public Endpoints (No Token Required)**
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 
 ### **Protected Endpoints (Token Required)**
 
 #### **📚 Course Management**
+
 ```bash
 # Get All Courses (STUDENT + ADMIN)
 GET http://localhost:8080/api/courses
@@ -173,6 +186,7 @@ Authorization: Bearer <your-token>
 ```
 
 #### **👨‍🎓 Student Management**
+
 ```bash
 # Get All Students
 GET http://localhost:8080/api/students
@@ -198,6 +212,7 @@ Content-Type: application/json
 ```
 
 #### **📝 Enrollment Management**
+
 ```bash
 # Create Enrollment
 POST http://localhost:8080/api/enrollments
@@ -217,6 +232,7 @@ Authorization: Bearer <your-token>
 ```
 
 #### **📊 Grade Management**
+
 ```bash
 # Create Grade
 POST http://localhost:8080/api/grades
@@ -246,20 +262,24 @@ Authorization: Bearer <your-token>
 ## 🧪 **Step 5: Testing Authentication Scenarios**
 
 ### **Scenario 1: Access without Token**
+
 - **Try**: `GET http://localhost:8080/api/courses`
 - **Without**: Authorization header
 - **Expected**: `401 Unauthorized`
 
 ### **Scenario 2: Access with Invalid Token**
+
 - **Try**: `GET http://localhost:8080/api/courses`
 - **With**: `Authorization: Bearer invalid-token`
 - **Expected**: `401 Unauthorized`
 
 ### **Scenario 3: Access with Expired Token**
+
 - **Try**: Use a token after 24 hours (token expires in 86400000ms = 24 hours)
 - **Expected**: `401 Unauthorized`
 
 ### **Scenario 4: Successful Access**
+
 - **Try**: `GET http://localhost:8080/api/courses`
 - **With**: Valid JWT token
 - **Expected**: `200 OK` with course list
@@ -269,6 +289,7 @@ Authorization: Bearer <your-token>
 ## 🔄 **Step 6: Complete Testing Workflow**
 
 ### **As a STUDENT:**
+
 1. **Register** → Get token
 2. **Browse courses** → `GET /api/courses`
 3. **Enroll in course** → `POST /api/enrollments`
@@ -276,6 +297,7 @@ Authorization: Bearer <your-token>
 5. **View grades** → `GET /api/grades/student/{studentId}`
 
 ### **As an ADMIN:**
+
 1. **Register** → Get token
 2. **Create course** → `POST /api/courses`
 3. **Create student** → `POST /api/students`
@@ -287,6 +309,7 @@ Authorization: Bearer <your-token>
 ## 🚨 **Common Authentication Errors**
 
 ### **401 Unauthorized**
+
 ```json
 {
   "timestamp": "2025-08-31T23:30:00",
@@ -295,13 +318,16 @@ Authorization: Bearer <your-token>
   "message": "Access denied"
 }
 ```
+
 **Solutions:**
+
 - Check if token is included in Authorization header
 - Verify token format: `Bearer <token>`
 - Ensure token hasn't expired
 - Confirm user exists and is active
 
 ### **403 Forbidden**
+
 ```json
 {
   "timestamp": "2025-08-31T23:30:00",
@@ -310,11 +336,14 @@ Authorization: Bearer <your-token>
   "message": "Access denied for this resource"
 }
 ```
+
 **Solutions:**
+
 - Check if user has required role (STUDENT vs ADMIN)
 - Verify endpoint permissions
 
 ### **400 Bad Request**
+
 ```json
 {
   "timestamp": "2025-08-31T23:30:00",
@@ -333,29 +362,34 @@ Authorization: Bearer <your-token>
 ## 🔧 **Postman Collection Setup**
 
 ### **Create Environment Variables**
+
 1. Create environment: "Course API"
 2. Add variables:
    - `baseUrl`: `http://localhost:8080`
    - `authToken`: (will be set dynamically)
 
 ### **Auto-Set Token Script**
+
 Add this to **Tests** tab of login request:
+
 ```javascript
 if (pm.response.code === 200) {
-    const response = pm.response.json();
-    pm.environment.set("authToken", response.token);
+  const response = pm.response.json();
+  pm.environment.set("authToken", response.token);
 }
 ```
 
 ### **Auto-Add Token to Requests**
+
 Add this to **Pre-request Script** for protected endpoints:
+
 ```javascript
 const token = pm.environment.get("authToken");
 if (token) {
-    pm.request.headers.add({
-        key: "Authorization",
-        value: "Bearer " + token
-    });
+  pm.request.headers.add({
+    key: "Authorization",
+    value: "Bearer " + token,
+  });
 }
 ```
 

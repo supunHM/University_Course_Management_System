@@ -17,6 +17,7 @@ import com.example.courseapi.exception.EnrollmentNotFoundException;
 import com.example.courseapi.exception.GradeNotFoundException;
 import com.example.courseapi.exception.StudentIdAlreadyExistsException;
 import com.example.courseapi.exception.StudentNotFoundException;
+import com.example.courseapi.exception.UserAlreadyExistsException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,6 +95,18 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        log.error("User already exists: {}", ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error("User Already Exists")
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

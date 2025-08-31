@@ -11,8 +11,8 @@ import com.example.courseapi.domain.Course;
 import com.example.courseapi.dto.CourseCreateRequest;
 import com.example.courseapi.dto.CourseResponse;
 import com.example.courseapi.dto.CourseUpdateRequest;
-import com.example.courseapi.exception.CourseNotFoundException;
 import com.example.courseapi.exception.CourseCodeAlreadyExistsException;
+import com.example.courseapi.exception.CourseNotFoundException;
 import com.example.courseapi.repository.CourseRepository;
 
 import lombok.RequiredArgsConstructor;

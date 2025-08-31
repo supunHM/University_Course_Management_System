@@ -11,6 +11,8 @@ import com.example.courseapi.domain.Course;
 import com.example.courseapi.dto.CourseCreateRequest;
 import com.example.courseapi.dto.CourseResponse;
 import com.example.courseapi.dto.CourseUpdateRequest;
+import com.example.courseapi.exception.CourseNotFoundException;
+import com.example.courseapi.exception.CourseCodeAlreadyExistsException;
 import com.example.courseapi.repository.CourseRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,11 +43,12 @@ public class CourseService {
             throw new CourseCodeAlreadyExistsException("Course with code '" + request.code() + "' already exists");
         }
 
-        Course course = new Course();
-        course.setCode(request.code());
-        course.setTitle(request.title());
-        course.setDescription(request.description());
-        course.setCredits(request.credits());
+        Course course = Course.builder()
+                .code(request.code())
+                .title(request.title())
+                .description(request.description())
+                .credits(request.credits())
+                .build();
 
         try {
             Course savedCourse = courseRepository.save(course);
@@ -64,14 +67,18 @@ public class CourseService {
             throw new CourseCodeAlreadyExistsException("Course with code '" + request.code() + "' already exists");
         }
 
-        existingCourse.setCode(request.code());
-        existingCourse.setTitle(request.title());
-        existingCourse.setDescription(request.description());
-        existingCourse.setCredits(request.credits());
+        // Create new course with updated values using builder
+        Course updatedCourse = Course.builder()
+                .id(existingCourse.getId())
+                .code(request.code())
+                .title(request.title())
+                .description(request.description())
+                .credits(request.credits())
+                .build();
 
         try {
-            Course updatedCourse = courseRepository.save(existingCourse);
-            return mapToResponse(updatedCourse);
+            Course savedCourse = courseRepository.save(updatedCourse);
+            return mapToResponse(savedCourse);
         } catch (DataIntegrityViolationException e) {
             throw new CourseCodeAlreadyExistsException("Course with code '" + request.code() + "' already exists");
         }

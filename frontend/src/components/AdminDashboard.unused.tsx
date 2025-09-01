@@ -130,10 +130,7 @@ const AdminDashboard: React.FC = () => {
         totalEnrollments: enrollmentsData.length,
         averageGrade:
           gradesData.length > 0
-            ? gradesData.reduce(
-                (acc: number, grade: Grade) => acc + grade.pointsEarned,
-                0
-              ) / gradesData.length
+            ? (gradesData.reduce<number>((acc, grade) => acc + (grade.pointsEarned || 0), 0) / gradesData.length)
             : 0,
       });
 

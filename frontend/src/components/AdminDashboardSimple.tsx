@@ -59,6 +59,7 @@ import {
   enrollmentAPI,
   gradeAPI,
 } from "../services/api";
+import GradeManagement from "./GradeManagement";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -353,14 +354,16 @@ const AdminDashboard: React.FC = () => {
           capacity: 30,
         },
         {
+          id: 2,
           name: "CS201",
           title: "Data Structures",
           enrollments: 22,
           capacity: 30,
         },
-        { name: "MATH101", title: "Calculus I", enrollments: 32, capacity: 35 },
-        { name: "PHYS101", title: "Physics I", enrollments: 18, capacity: 25 },
+        { id: 3, name: "MATH101", title: "Calculus I", enrollments: 32, capacity: 35 },
+        { id: 4, name: "PHYS101", title: "Physics I", enrollments: 18, capacity: 25 },
         {
+          id: 5,
           name: "ENG101",
           title: "English Comp",
           enrollments: 15,
@@ -1820,40 +1823,7 @@ const AdminDashboard: React.FC = () => {
         </TabPanel>
 
         <TabPanel value={tabValue} index={4}>
-          {/* Grades Management */}
-          <Box
-            sx={{
-              mb: 3,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h5" component="h2">
-              Grade Management
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={() => {
-                /* TODO: Open grade entry dialog */
-              }}
-            >
-              Enter Grade
-            </Button>
-          </Box>
-
-          <Paper sx={{ p: 3 }}>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              textAlign="center"
-              py={4}
-            >
-              Grade management interface will be available here once the grade
-              API endpoints are integrated.
-            </Typography>
-          </Paper>
+          <GradeManagement />
         </TabPanel>
       </Container>
 

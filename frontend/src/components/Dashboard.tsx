@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
   Paper,
   Typography,
   Card,
@@ -85,12 +84,14 @@ const Dashboard: React.FC = () => {
       setCourses(coursesData);
 
       // Calculate average grade
-      const totalGrades = gradesData.reduce(
-        (sum, grade) => sum + (grade.gradePoints || 0),
-        0
-      );
-      const avgGrade =
-        gradesData.length > 0 ? totalGrades / gradesData.length : 0;
+      const totalGrades = gradesData.reduce((sum, grade) => {
+        const pct =
+          grade.totalPoints && grade.totalPoints > 0
+            ? (grade.pointsEarned / grade.totalPoints) * 100
+            : 0;
+        return sum + pct;
+      }, 0);
+      const avgGrade = gradesData.length > 0 ? totalGrades / gradesData.length : 0;
 
       setStats({
         totalCourses: coursesData.length,
@@ -196,16 +197,22 @@ const Dashboard: React.FC = () => {
       {/* Main Content */}
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
         <Typography variant="h4" gutterBottom>
-          Welcome back, {user?.fullName || user?.username}!
+          Welcome back, {user ? ((user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : user.username) : 'Guest'}!
         </Typography>
 
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
           {isAdmin() ? "Administrator Dashboard" : "Student Dashboard"}
         </Typography>
 
-        {/* Stats Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
+          {/* Stats Cards */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(4, 1fr)" },
+              gap: 3,
+              mb: 4,
+            }}
+          >
             <Card>
               <CardContent>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -219,9 +226,7 @@ const Dashboard: React.FC = () => {
                 </Box>
               </CardContent>
             </Card>
-          </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -235,9 +240,7 @@ const Dashboard: React.FC = () => {
                 </Box>
               </CardContent>
             </Card>
-          </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -246,16 +249,12 @@ const Dashboard: React.FC = () => {
                     <Typography color="textSecondary" gutterBottom>
                       Total Enrollments
                     </Typography>
-                    <Typography variant="h4">
-                      {stats.totalEnrollments}
-                    </Typography>
+                    <Typography variant="h4">{stats.totalEnrollments}</Typography>
                   </Box>
                 </Box>
               </CardContent>
             </Card>
-          </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -264,20 +263,16 @@ const Dashboard: React.FC = () => {
                     <Typography color="textSecondary" gutterBottom>
                       Average Grade
                     </Typography>
-                    <Typography variant="h4">
-                      {stats.averageGrade.toFixed(1)}
-                    </Typography>
+                    <Typography variant="h4">{stats.averageGrade.toFixed(1)}</Typography>
                   </Box>
                 </Box>
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
+          </Box>
 
         {/* Charts */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, height: 400 }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 3, mb: 4 }}>
+          <Paper sx={{ p: 3, height: 400 }}>
               <Typography variant="h6" gutterBottom>
                 Enrollment Distribution by Course
               </Typography>
@@ -306,10 +301,8 @@ const Dashboard: React.FC = () => {
                 </PieChart>
               </ResponsiveContainer>
             </Paper>
-          </Grid>
 
-          <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, height: 400 }}>
+          <Paper sx={{ p: 3, height: 400 }}>
               <Typography variant="h6" gutterBottom>
                 Grade Distribution
               </Typography>
@@ -323,57 +316,42 @@ const Dashboard: React.FC = () => {
                   <Bar dataKey="count" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer>
-            </Paper>
-          </Grid>
-        </Grid>
+          </Paper>
+        </Box>
 
         {/* Recent Courses */}
         <Paper sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
             {isAdmin() ? "All Courses" : "Available Courses"}
           </Typography>
-          <Grid container spacing={2}>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)" }, gap: 2 }}>
             {courses.slice(0, 6).map((course) => (
-              <Grid item xs={12} sm={6} md={4} key={course.id}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                      <MenuBook color="primary" sx={{ mr: 1 }} />
-                      <Typography variant="h6" component="div">
-                        {course.courseCode}
+              <Card variant="outlined" key={course.id}>
+                <CardContent>
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                    <MenuBook color="primary" sx={{ mr: 1 }} />
+                    <Typography variant="h6" component="div">
+                      {course.code}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" gutterBottom>
+                    {course.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" noWrap>
+                    {course.description}
+                  </Typography>
+                  <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Chip label={`${course.credits} Credits`} size="small" color="primary" variant="outlined" />
+                    {course.instructor && (
+                      <Typography variant="body2" color="text.secondary">
+                        {course.instructor}
                       </Typography>
-                    </Box>
-                    <Typography variant="body1" gutterBottom>
-                      {course.courseName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {course.description}
-                    </Typography>
-                    <Box
-                      sx={{
-                        mt: 2,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Chip
-                        label={`${course.credits} Credits`}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
-                      {course.instructor && (
-                        <Typography variant="body2" color="text.secondary">
-                          {course.instructor}
-                        </Typography>
-                      )}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
+                    )}
+                  </Box>
+                </CardContent>
+              </Card>
             ))}
-          </Grid>
+          </Box>
         </Paper>
       </Container>
     </Box>

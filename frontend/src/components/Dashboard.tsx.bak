@@ -1,0 +1,353 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Card,
+  CardContent,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Avatar,
+  Container,
+  Chip,
+  LinearProgress,
+} from '@mui/material';
+import {
+  Dashboard as DashboardIcon,
+  School,
+  People,
+  Assignment,
+  AccountCircle,
+  ExitToApp,
+  MenuBook,
+  TrendingUp,
+} from '@mui/icons-material';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useAuth } from '../contexts/AuthContext';
+import type { Course, Student, Enrollment, Grade } from '../types';
+import { courseAPI, studentAPI, enrollmentAPI, gradeAPI } from '../services/api';
+
+interface DashboardStats {
+  totalCourses: number;
+  totalStudents: number;
+  totalEnrollments: number;
+  averageGrade: number;
+}
+
+const Dashboard: React.FC = () => {
+  const { user, logout, isAdmin, isStudent } = useAuth();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalCourses: 0,
+    totalStudents: 0,
+    totalEnrollments: 0,
+    averageGrade: 0,
+  });
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    setIsLoading(true);
+    try {
+      const [coursesData, studentsData, enrollmentsData, gradesData] = await Promise.all([
+        courseAPI.getAllCourses(),
+        studentAPI.getAllStudents(),
+        enrollmentAPI.getAllEnrollments(),
+        gradeAPI.getAllGrades(),
+      ]);
+
+      setCourses(coursesData);
+      
+      // Calculate average grade
+      const totalGrades = gradesData.reduce((sum, grade) => sum + (grade.gradePoints || 0), 0);
+      const avgGrade = gradesData.length > 0 ? totalGrades / gradesData.length : 0;
+
+      setStats({
+        totalCourses: coursesData.length,
+        totalStudents: studentsData.length,
+        totalEnrollments: enrollmentsData.length,
+        averageGrade: avgGrade,
+      });
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleMenuClose();
+  };
+
+  // Sample data for charts
+  const enrollmentData = [
+    { name: 'Computer Science', value: 45 },
+    { name: 'Mathematics', value: 30 },
+    { name: 'Physics', value: 25 },
+    { name: 'Chemistry', value: 20 },
+  ];
+
+  const gradeDistribution = [
+    { grade: 'A', count: 25 },
+    { grade: 'B', count: 35 },
+    { grade: 'C', count: 20 },
+    { grade: 'D', count: 10 },
+    { grade: 'F', count: 5 },
+  ];
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* App Bar */}
+      <AppBar position="static">
+        <Toolbar>
+          <DashboardIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            University Course Management System
+          </Typography>
+          <Chip
+            label={user?.role}
+            color="secondary"
+            variant="outlined"
+            sx={{ mr: 2, color: 'white', borderColor: 'white' }}
+          />
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleMenuOpen}
+            color="inherit"
+          >
+            <Avatar sx={{ width: 32, height: 32 }}>
+              {user?.username?.charAt(0).toUpperCase()}
+            </Avatar>
+          </IconButton>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={handleMenuClose}>
+              <AccountCircle sx={{ mr: 1 }} />
+              Profile
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <ExitToApp sx={{ mr: 1 }} />
+              Logout
+            </MenuItem>
+          </Menu>
+        </Toolbar>
+      </AppBar>
+
+      {/* Loading Progress */}
+      {isLoading && <LinearProgress />}
+
+      {/* Main Content */}
+      <Container maxWidth="xl" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
+        <Typography variant="h4" gutterBottom>
+          Welcome back, {user?.fullName || user?.username}!
+        </Typography>
+        
+        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+          {isAdmin() ? 'Administrator Dashboard' : 'Student Dashboard'}
+        </Typography>
+
+        {/* Stats Cards */}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <School color="primary" sx={{ mr: 2, fontSize: 40 }} />
+                  <Box>
+                    <Typography color="textSecondary" gutterBottom>
+                      Total Courses
+                    </Typography>
+                    <Typography variant="h4">
+                      {stats.totalCourses}
+                    </Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <People color="secondary" sx={{ mr: 2, fontSize: 40 }} />
+                  <Box>
+                    <Typography color="textSecondary" gutterBottom>
+                      Total Students
+                    </Typography>
+                    <Typography variant="h4">
+                      {stats.totalStudents}
+                    </Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Assignment color="success" sx={{ mr: 2, fontSize: 40 }} />
+                  <Box>
+                    <Typography color="textSecondary" gutterBottom>
+                      Total Enrollments
+                    </Typography>
+                    <Typography variant="h4">
+                      {stats.totalEnrollments}
+                    </Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <TrendingUp color="warning" sx={{ mr: 2, fontSize: 40 }} />
+                  <Box>
+                    <Typography color="textSecondary" gutterBottom>
+                      Average Grade
+                    </Typography>
+                    <Typography variant="h4">
+                      {stats.averageGrade.toFixed(1)}
+                    </Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Charts */}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12} md={6}>
+            <Paper sx={{ p: 3, height: 400 }}>
+              <Typography variant="h6" gutterBottom>
+                Enrollment Distribution by Course
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={enrollmentData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {enrollmentData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper sx={{ p: 3, height: 400 }}>
+              <Typography variant="h6" gutterBottom>
+                Grade Distribution
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={gradeDistribution}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="grade" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="count" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Paper>
+          </Grid>
+        </Grid>
+
+        {/* Recent Courses */}
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {isAdmin() ? 'All Courses' : 'Available Courses'}
+          </Typography>
+          <Grid container spacing={2}>
+            {courses.slice(0, 6).map((course) => (
+              <Grid item xs={12} sm={6} md={4} key={course.id}>
+                <Card variant="outlined">
+                  <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <MenuBook color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="h6" component="div">
+                        {course.courseCode}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body1" gutterBottom>
+                      {course.courseName}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {course.description}
+                    </Typography>
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Chip
+                        label={`${course.credits} Credits`}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
+                      {course.instructor && (
+                        <Typography variant="body2" color="text.secondary">
+                          {course.instructor}
+                        </Typography>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Paper>
+      </Container>
+    </Box>
+  );
+};
+
+export default Dashboard;

@@ -1,0 +1,329 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Container,
+  Link,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { Visibility, VisibilityOff, PersonAdd } from "@mui/icons-material";
+import { useAuth } from "../contexts/AuthContext";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+
+const SimpleRegister: React.FC = () => {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "STUDENT" as "ADMIN" | "STUDENT",
+    firstName: "",
+    lastName: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (error) setError("");
+  };
+
+  const handleRoleChange = (e: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      role: e.target.value,
+    }));
+  };
+
+  const validateForm = () => {
+    if (
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword ||
+      !formData.firstName ||
+      !formData.lastName
+    ) {
+      return "Please fill in all required fields";
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return "Passwords do not match";
+    }
+
+    if (formData.password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return "Please enter a valid email address";
+    }
+
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const { confirmPassword, ...registrationData } = formData;
+      await register(registrationData);
+      navigate("/dashboard");
+    } catch (err: any) {
+      console.error("Registration error:", err);
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  return (
+    <Container component="main" maxWidth="md">
+      <Box
+        sx={{
+          marginTop: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minHeight: "80vh",
+          justifyContent: "center",
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            padding: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            borderRadius: 3,
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "50%",
+              padding: 2,
+              marginBottom: 2,
+            }}
+          >
+            <PersonAdd sx={{ fontSize: 40, color: "white" }} />
+          </Box>
+
+          <Typography component="h1" variant="h4" gutterBottom>
+            Create Account
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Join our university course management system
+          </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <TextField
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                value={formData.username}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <TextField
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                autoComplete="given-name"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+
+              <TextField
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="family-name"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </Box>
+
+            <FormControl fullWidth required sx={{ mb: 2 }}>
+              <InputLabel id="role-label">Role</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role"
+                value={formData.role}
+                label="Role"
+                onChange={handleRoleChange}
+                disabled={isLoading}
+              >
+                <MenuItem value="STUDENT">Student</MenuItem>
+                <MenuItem value="ADMIN">Administrator</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                id="password"
+                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle confirm password visibility"
+                        onClick={toggleConfirmPasswordVisibility}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 1,
+                mb: 2,
+                py: 1.5,
+                fontSize: "1.1rem",
+                textTransform: "none",
+              }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Create Account"
+              )}
+            </Button>
+
+            <Box sx={{ textAlign: "center", mt: 2 }}>
+              <Typography variant="body2">
+                Already have an account?{" "}
+                <Link component={RouterLink} to="/login" variant="body2">
+                  Sign in here
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
+  );
+};
+
+export default SimpleRegister;

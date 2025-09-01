@@ -112,17 +112,23 @@ export const studentAPI = {
   },
 
   getStudentByStudentId: async (studentId: string): Promise<Student> => {
-    const response: AxiosResponse<Student> = await api.get(`/students/student-id/${studentId}`);
+    const response: AxiosResponse<Student> = await api.get(
+      `/students/student-id/${studentId}`
+    );
     return response.data;
   },
 
   getStudentsByDepartment: async (department: string): Promise<Student[]> => {
-    const response: AxiosResponse<Student[]> = await api.get(`/students/department/${encodeURIComponent(department)}`);
+    const response: AxiosResponse<Student[]> = await api.get(
+      `/students/department/${encodeURIComponent(department)}`
+    );
     return response.data;
   },
 
   searchStudents: async (keyword: string): Promise<Student[]> => {
-    const response: AxiosResponse<Student[]> = await api.get(`/students/search?keyword=${encodeURIComponent(keyword)}`);
+    const response: AxiosResponse<Student[]> = await api.get(
+      `/students/search?keyword=${encodeURIComponent(keyword)}`
+    );
     return response.data;
   },
 
@@ -158,7 +164,9 @@ export const enrollmentAPI = {
   },
 
   getEnrollmentById: async (id: number): Promise<Enrollment> => {
-    const response: AxiosResponse<Enrollment> = await api.get(`/enrollments/${id}`);
+    const response: AxiosResponse<Enrollment> = await api.get(
+      `/enrollments/${id}`
+    );
     return response.data;
   },
 
@@ -168,7 +176,10 @@ export const enrollmentAPI = {
     semester?: string;
     academicYear?: string;
   }): Promise<Enrollment> => {
-    const response: AxiosResponse<Enrollment> = await api.post("/enrollments", enrollmentData);
+    const response: AxiosResponse<Enrollment> = await api.post(
+      "/enrollments",
+      enrollmentData
+    );
     return response.data;
   },
 
@@ -180,7 +191,7 @@ export const enrollmentAPI = {
       studentId,
       courseId,
       semester: "Fall",
-      academicYear: "2025"
+      academicYear: "2025",
     });
     return response.data;
   },
@@ -199,23 +210,38 @@ export const enrollmentAPI = {
     return response.data;
   },
 
-  updateEnrollmentStatus: async (id: number, status: string): Promise<Enrollment> => {
-    const response: AxiosResponse<Enrollment> = await api.put(`/enrollments/${id}/status?status=${status}`);
+  updateEnrollmentStatus: async (
+    id: number,
+    status: string
+  ): Promise<Enrollment> => {
+    const response: AxiosResponse<Enrollment> = await api.put(
+      `/enrollments/${id}/status?status=${status}`
+    );
     return response.data;
   },
 
   getEnrollmentCountByCourse: async (courseId: number): Promise<number> => {
-    const response: AxiosResponse<number> = await api.get(`/enrollments/count/course/${courseId}`);
+    const response: AxiosResponse<number> = await api.get(
+      `/enrollments/count/course/${courseId}`
+    );
     return response.data;
   },
 
   getEnrollmentCountByStudent: async (studentId: number): Promise<number> => {
-    const response: AxiosResponse<number> = await api.get(`/enrollments/count/student/${studentId}`);
+    const response: AxiosResponse<number> = await api.get(
+      `/enrollments/count/student/${studentId}`
+    );
     return response.data;
   },
 
-  updateEnrollment: async (id: number, enrollment: Partial<Enrollment>): Promise<Enrollment> => {
-    const response: AxiosResponse<Enrollment> = await api.put(`/enrollments/${id}`, enrollment);
+  updateEnrollment: async (
+    id: number,
+    enrollment: Partial<Enrollment>
+  ): Promise<Enrollment> => {
+    const response: AxiosResponse<Enrollment> = await api.put(
+      `/enrollments/${id}`,
+      enrollment
+    );
     return response.data;
   },
 
@@ -237,7 +263,9 @@ export const gradeAPI = {
   },
 
   getGradesByEnrollment: async (enrollmentId: number): Promise<Grade[]> => {
-    const response: AxiosResponse<Grade[]> = await api.get(`/grades/enrollment/${enrollmentId}`);
+    const response: AxiosResponse<Grade[]> = await api.get(
+      `/grades/enrollment/${enrollmentId}`
+    );
     return response.data;
   },
 
@@ -256,12 +284,16 @@ export const gradeAPI = {
   },
 
   getAverageGradeByStudent: async (studentId: number): Promise<number> => {
-    const response: AxiosResponse<number> = await api.get(`/grades/average/student/${studentId}`);
+    const response: AxiosResponse<number> = await api.get(
+      `/grades/average/student/${studentId}`
+    );
     return response.data;
   },
 
   getAverageGradeByCourse: async (courseId: number): Promise<number> => {
-    const response: AxiosResponse<number> = await api.get(`/grades/average/course/${courseId}`);
+    const response: AxiosResponse<number> = await api.get(
+      `/grades/average/course/${courseId}`
+    );
     return response.data;
   },
 

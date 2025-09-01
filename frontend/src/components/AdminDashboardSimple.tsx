@@ -113,19 +113,24 @@ const AdminDashboard: React.FC = () => {
   // Course creation modal states
   const [openCourseModal, setOpenCourseModal] = useState(false);
   const [courseFormData, setCourseFormData] = useState({
-    code: '',
-    title: '',
-    description: '',
-    credits: ''
+    code: "",
+    title: "",
+    description: "",
+    credits: "",
   });
-  const [courseFormErrors, setCourseFormErrors] = useState<{[key: string]: string}>({});
+  const [courseFormErrors, setCourseFormErrors] = useState<{
+    [key: string]: string;
+  }>({});
   const [isEditingCourse, setIsEditingCourse] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [openCourseDetails, setOpenCourseDetails] = useState(false);
-  const [selectedCourseDetails, setSelectedCourseDetails] = useState<Course | null>(null);
+  const [selectedCourseDetails, setSelectedCourseDetails] =
+    useState<Course | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   useEffect(() => {
     fetchAllData();
@@ -135,8 +140,8 @@ const AdminDashboard: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Starting to fetch all data...');
-      
+      console.log("Starting to fetch all data...");
+
       // Fetch all data from your comprehensive API endpoints
       const [coursesData, studentsData, enrollmentsData, gradesData] =
         await Promise.all([
@@ -146,19 +151,23 @@ const AdminDashboard: React.FC = () => {
           gradeAPI.getAllGrades(),
         ]);
 
-      console.log('Fetched data successfully:', {
+      console.log("Fetched data successfully:", {
         courses: coursesData.length,
         students: studentsData.length,
         enrollments: enrollmentsData.length,
-        grades: gradesData.length
+        grades: gradesData.length,
       });
 
       setCourses(coursesData);
       setStudents(studentsData);
 
       // Calculate real stats from API data
-      const totalGradePoints = gradesData.reduce((sum, grade) => sum + (grade.pointsEarned || 0), 0);
-      const averageGrade = gradesData.length > 0 ? totalGradePoints / gradesData.length : 0;
+      const totalGradePoints = gradesData.reduce(
+        (sum, grade) => sum + (grade.pointsEarned || 0),
+        0
+      );
+      const averageGrade =
+        gradesData.length > 0 ? totalGradePoints / gradesData.length : 0;
 
       setStats({
         totalCourses: coursesData.length,
@@ -171,62 +180,170 @@ const AdminDashboard: React.FC = () => {
       await prepareCourseEnrollmentData(coursesData, enrollmentsData);
       prepareGradeDistributionData(gradesData);
       prepareDepartmentData(studentsData);
-      
     } catch (err: any) {
       console.error("Error fetching data:", err);
-      setError(`Failed to connect to API: ${err.response?.data?.message || err.message || 'Server unavailable'}`);
-      
+      setError(
+        `Failed to connect to API: ${
+          err.response?.data?.message || err.message || "Server unavailable"
+        }`
+      );
+
       // Fallback to demonstration data when API is not available
-      console.log('Using fallback demonstration data...');
+      console.log("Using fallback demonstration data...");
       const mockCourses = [
-        { id: 1, code: 'CS101', title: 'Introduction to Programming', description: 'Basic programming concepts', credits: 3 },
-        { id: 2, code: 'CS201', title: 'Data Structures', description: 'Advanced data structures', credits: 4 },
-        { id: 3, code: 'MATH101', title: 'Calculus I', description: 'Differential calculus', credits: 4 },
-        { id: 4, code: 'PHYS101', title: 'Physics I', description: 'Classical mechanics', credits: 4 },
-        { id: 5, code: 'ENG101', title: 'English Composition', description: 'Academic writing skills', credits: 3 }
+        {
+          id: 1,
+          code: "CS101",
+          title: "Introduction to Programming",
+          description: "Basic programming concepts",
+          credits: 3,
+        },
+        {
+          id: 2,
+          code: "CS201",
+          title: "Data Structures",
+          description: "Advanced data structures",
+          credits: 4,
+        },
+        {
+          id: 3,
+          code: "MATH101",
+          title: "Calculus I",
+          description: "Differential calculus",
+          credits: 4,
+        },
+        {
+          id: 4,
+          code: "PHYS101",
+          title: "Physics I",
+          description: "Classical mechanics",
+          credits: 4,
+        },
+        {
+          id: 5,
+          code: "ENG101",
+          title: "English Composition",
+          description: "Academic writing skills",
+          credits: 3,
+        },
       ];
-      
+
       const mockStudents = [
-        { id: 1, studentId: 'STU2025001', firstName: 'John', lastName: 'Doe', email: 'john@university.edu', phoneNumber: '+1234567890', dateOfBirth: '2000-01-15', address: '123 University Ave', department: 'Computer Science', yearOfStudy: 2, enrollmentDate: '2023-09-01' },
-        { id: 2, studentId: 'STU2025002', firstName: 'Jane', lastName: 'Smith', email: 'jane@university.edu', phoneNumber: '+1987654321', dateOfBirth: '1999-05-20', address: '456 College St', department: 'Mathematics', yearOfStudy: 1, enrollmentDate: '2024-09-01' },
-        { id: 3, studentId: 'STU2025003', firstName: 'Bob', lastName: 'Johnson', email: 'bob@university.edu', phoneNumber: '+1122334455', dateOfBirth: '1998-03-10', address: '789 Campus Rd', department: 'Physics', yearOfStudy: 3, enrollmentDate: '2022-09-01' },
-        { id: 4, studentId: 'STU2025004', firstName: 'Alice', lastName: 'Brown', email: 'alice@university.edu', phoneNumber: '+1555666777', dateOfBirth: '2001-11-25', address: '321 Student Ln', department: 'Computer Science', yearOfStudy: 1, enrollmentDate: '2024-09-01' },
-        { id: 5, studentId: 'STU2025005', firstName: 'Charlie', lastName: 'Wilson', email: 'charlie@university.edu', phoneNumber: '+1999888777', dateOfBirth: '1997-07-08', address: '654 Academic Blvd', department: 'Engineering', yearOfStudy: 4, enrollmentDate: '2021-09-01' }
+        {
+          id: 1,
+          studentId: "STU2025001",
+          firstName: "John",
+          lastName: "Doe",
+          email: "john@university.edu",
+          phoneNumber: "+1234567890",
+          dateOfBirth: "2000-01-15",
+          address: "123 University Ave",
+          department: "Computer Science",
+          yearOfStudy: 2,
+          enrollmentDate: "2023-09-01",
+        },
+        {
+          id: 2,
+          studentId: "STU2025002",
+          firstName: "Jane",
+          lastName: "Smith",
+          email: "jane@university.edu",
+          phoneNumber: "+1987654321",
+          dateOfBirth: "1999-05-20",
+          address: "456 College St",
+          department: "Mathematics",
+          yearOfStudy: 1,
+          enrollmentDate: "2024-09-01",
+        },
+        {
+          id: 3,
+          studentId: "STU2025003",
+          firstName: "Bob",
+          lastName: "Johnson",
+          email: "bob@university.edu",
+          phoneNumber: "+1122334455",
+          dateOfBirth: "1998-03-10",
+          address: "789 Campus Rd",
+          department: "Physics",
+          yearOfStudy: 3,
+          enrollmentDate: "2022-09-01",
+        },
+        {
+          id: 4,
+          studentId: "STU2025004",
+          firstName: "Alice",
+          lastName: "Brown",
+          email: "alice@university.edu",
+          phoneNumber: "+1555666777",
+          dateOfBirth: "2001-11-25",
+          address: "321 Student Ln",
+          department: "Computer Science",
+          yearOfStudy: 1,
+          enrollmentDate: "2024-09-01",
+        },
+        {
+          id: 5,
+          studentId: "STU2025005",
+          firstName: "Charlie",
+          lastName: "Wilson",
+          email: "charlie@university.edu",
+          phoneNumber: "+1999888777",
+          dateOfBirth: "1997-07-08",
+          address: "654 Academic Blvd",
+          department: "Engineering",
+          yearOfStudy: 4,
+          enrollmentDate: "2021-09-01",
+        },
       ];
-      
+
       setCourses(mockCourses);
       setStudents(mockStudents);
-      
+
       setStats({
         totalCourses: mockCourses.length,
         totalStudents: mockStudents.length,
         totalEnrollments: 12,
-        averageGrade: 85.7
+        averageGrade: 85.7,
       });
-      
+
       // Set demonstration chart data
       setCourseEnrollmentData([
-        { name: 'CS101', title: 'Intro Programming', enrollments: 28, capacity: 30 },
-        { name: 'CS201', title: 'Data Structures', enrollments: 22, capacity: 30 },
-        { name: 'MATH101', title: 'Calculus I', enrollments: 32, capacity: 35 },
-        { name: 'PHYS101', title: 'Physics I', enrollments: 18, capacity: 25 },
-        { name: 'ENG101', title: 'English Comp', enrollments: 15, capacity: 20 }
+        {
+          name: "CS101",
+          title: "Intro Programming",
+          enrollments: 28,
+          capacity: 30,
+        },
+        {
+          name: "CS201",
+          title: "Data Structures",
+          enrollments: 22,
+          capacity: 30,
+        },
+        { name: "MATH101", title: "Calculus I", enrollments: 32, capacity: 35 },
+        { name: "PHYS101", title: "Physics I", enrollments: 18, capacity: 25 },
+        {
+          name: "ENG101",
+          title: "English Comp",
+          enrollments: 15,
+          capacity: 20,
+        },
       ]);
-      
+
       setGradeDistributionData([
-        { name: 'A (90-100)', count: 15, color: '#4caf50' },
-        { name: 'B (80-89)', count: 22, color: '#2196f3' },
-        { name: 'C (70-79)', count: 12, color: '#ff9800' },
-        { name: 'D (60-69)', count: 4, color: '#ff5722' },
-        { name: 'F (0-59)', count: 2, color: '#f44336' }
+        { name: "A (90-100)", count: 15, color: "#4caf50" },
+        { name: "B (80-89)", count: 22, color: "#2196f3" },
+        { name: "C (70-79)", count: 12, color: "#ff9800" },
+        { name: "D (60-69)", count: 4, color: "#ff5722" },
+        { name: "F (0-59)", count: 2, color: "#f44336" },
       ]);
-      
+
       setDepartmentData([
-        { name: 'Computer Science', value: 35, color: '#0088FE' },
-        { name: 'Mathematics', value: 25, color: '#00C49F' },
-        { name: 'Physics', value: 20, color: '#FFBB28' },
-        { name: 'Engineering', value: 28, color: '#FF8042' },
-        { name: 'English', value: 15, color: '#8884d8' }
+        { name: "Computer Science", value: 35, color: "#0088FE" },
+        { name: "Mathematics", value: 25, color: "#00C49F" },
+        { name: "Physics", value: 20, color: "#FFBB28" },
+        { name: "Engineering", value: 28, color: "#FF8042" },
+        { name: "English", value: 15, color: "#8884d8" },
       ]);
     } finally {
       setLoading(false);
@@ -242,7 +359,8 @@ const AdminDashboard: React.FC = () => {
       const data = await Promise.all(
         courses.map(async (course) => {
           try {
-            const enrollmentCount = await enrollmentAPI.getEnrollmentCountByCourse(course.id);
+            const enrollmentCount =
+              await enrollmentAPI.getEnrollmentCountByCourse(course.id);
             return {
               name: course.code,
               title: course.title,
@@ -251,7 +369,9 @@ const AdminDashboard: React.FC = () => {
             };
           } catch (error) {
             // Fallback to filtering local enrollments data based on nested course object
-            const localCount = enrollments.filter((e) => e.course && e.course.id === course.id).length;
+            const localCount = enrollments.filter(
+              (e) => e.course && e.course.id === course.id
+            ).length;
             return {
               name: course.code,
               title: course.title,
@@ -263,13 +383,15 @@ const AdminDashboard: React.FC = () => {
       );
       setCourseEnrollmentData(data.slice(0, 10)); // Show top 10 courses
     } catch (error) {
-      console.warn('Error preparing course enrollment data:', error);
+      console.warn("Error preparing course enrollment data:", error);
       // Simple fallback using local data with nested course structure
       const data = courses
         .map((course) => ({
           name: course.code,
           title: course.title,
-          enrollments: enrollments.filter((e) => e.course && e.course.id === course.id).length,
+          enrollments: enrollments.filter(
+            (e) => e.course && e.course.id === course.id
+          ).length,
           capacity: 30,
         }))
         .slice(0, 10);
@@ -315,7 +437,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Comprehensive CRUD Operations for Admin Dashboard
-  
+
   // Course Management Functions
   const createCourse = async (courseData: {
     code: string;
@@ -326,25 +448,38 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       const newCourse = await courseAPI.createCourse(courseData);
-      setCourses(prev => [...prev, newCourse]);
-      setStats(prev => ({ ...prev, totalCourses: prev.totalCourses + 1 }));
+      setCourses((prev) => [...prev, newCourse]);
+      setStats((prev) => ({ ...prev, totalCourses: prev.totalCourses + 1 }));
       return newCourse;
     } catch (error: any) {
-      setError(`Failed to create course: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to create course: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const updateCourse = async (courseId: number, courseData: Partial<Course>) => {
+  const updateCourse = async (
+    courseId: number,
+    courseData: Partial<Course>
+  ) => {
     try {
       setLoading(true);
       const updatedCourse = await courseAPI.updateCourse(courseId, courseData);
-      setCourses(prev => prev.map(c => c.id === courseId ? updatedCourse : c));
+      setCourses((prev) =>
+        prev.map((c) => (c.id === courseId ? updatedCourse : c))
+      );
       return updatedCourse;
     } catch (error: any) {
-      setError(`Failed to update course: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to update course: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -355,10 +490,14 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       await courseAPI.deleteCourse(courseId);
-      setCourses(prev => prev.filter(c => c.id !== courseId));
-      setStats(prev => ({ ...prev, totalCourses: prev.totalCourses - 1 }));
+      setCourses((prev) => prev.filter((c) => c.id !== courseId));
+      setStats((prev) => ({ ...prev, totalCourses: prev.totalCourses - 1 }));
     } catch (error: any) {
-      setError(`Failed to delete course: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to delete course: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -381,25 +520,41 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       const newStudent = await studentAPI.createStudent(studentData);
-      setStudents(prev => [...prev, newStudent]);
-      setStats(prev => ({ ...prev, totalStudents: prev.totalStudents + 1 }));
+      setStudents((prev) => [...prev, newStudent]);
+      setStats((prev) => ({ ...prev, totalStudents: prev.totalStudents + 1 }));
       return newStudent;
     } catch (error: any) {
-      setError(`Failed to create student: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to create student: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const updateStudent = async (studentId: number, studentData: Partial<Student>) => {
+  const updateStudent = async (
+    studentId: number,
+    studentData: Partial<Student>
+  ) => {
     try {
       setLoading(true);
-      const updatedStudent = await studentAPI.updateStudent(studentId, studentData);
-      setStudents(prev => prev.map(s => s.id === studentId ? updatedStudent : s));
+      const updatedStudent = await studentAPI.updateStudent(
+        studentId,
+        studentData
+      );
+      setStudents((prev) =>
+        prev.map((s) => (s.id === studentId ? updatedStudent : s))
+      );
       return updatedStudent;
     } catch (error: any) {
-      setError(`Failed to update student: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to update student: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -410,10 +565,14 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       await studentAPI.deleteStudent(studentId);
-      setStudents(prev => prev.filter(s => s.id !== studentId));
-      setStats(prev => ({ ...prev, totalStudents: prev.totalStudents - 1 }));
+      setStudents((prev) => prev.filter((s) => s.id !== studentId));
+      setStats((prev) => ({ ...prev, totalStudents: prev.totalStudents - 1 }));
     } catch (error: any) {
-      setError(`Failed to delete student: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to delete student: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -431,26 +590,43 @@ const AdminDashboard: React.FC = () => {
       setLoading(true);
       const newEnrollment = await enrollmentAPI.createEnrollment({
         ...enrollmentData,
-        semester: enrollmentData.semester || 'Fall',
-        academicYear: enrollmentData.academicYear || '2025'
+        semester: enrollmentData.semester || "Fall",
+        academicYear: enrollmentData.academicYear || "2025",
       });
-      setStats(prev => ({ ...prev, totalEnrollments: prev.totalEnrollments + 1 }));
+      setStats((prev) => ({
+        ...prev,
+        totalEnrollments: prev.totalEnrollments + 1,
+      }));
       return newEnrollment;
     } catch (error: any) {
-      setError(`Failed to create enrollment: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to create enrollment: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const updateEnrollmentStatus = async (enrollmentId: number, status: 'ACTIVE' | 'DROPPED' | 'COMPLETED' | 'PENDING') => {
+  const updateEnrollmentStatus = async (
+    enrollmentId: number,
+    status: "ACTIVE" | "DROPPED" | "COMPLETED" | "PENDING"
+  ) => {
     try {
       setLoading(true);
-      const updatedEnrollment = await enrollmentAPI.updateEnrollmentStatus(enrollmentId, status);
+      const updatedEnrollment = await enrollmentAPI.updateEnrollmentStatus(
+        enrollmentId,
+        status
+      );
       return updatedEnrollment;
     } catch (error: any) {
-      setError(`Failed to update enrollment status: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to update enrollment status: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -461,9 +637,16 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       await enrollmentAPI.deleteEnrollment(enrollmentId);
-      setStats(prev => ({ ...prev, totalEnrollments: prev.totalEnrollments - 1 }));
+      setStats((prev) => ({
+        ...prev,
+        totalEnrollments: prev.totalEnrollments - 1,
+      }));
     } catch (error: any) {
-      setError(`Failed to delete enrollment: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to delete enrollment: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -473,7 +656,14 @@ const AdminDashboard: React.FC = () => {
   // Grade Management Functions
   const createGrade = async (gradeData: {
     enrollmentId: number;
-    assessmentType: 'ASSIGNMENT' | 'QUIZ' | 'EXAM' | 'PROJECT' | 'PRESENTATION' | 'LAB' | 'PARTICIPATION';
+    assessmentType:
+      | "ASSIGNMENT"
+      | "QUIZ"
+      | "EXAM"
+      | "PROJECT"
+      | "PRESENTATION"
+      | "LAB"
+      | "PARTICIPATION";
     assessmentName: string;
     pointsEarned: number;
     totalPoints: number;
@@ -490,7 +680,11 @@ const AdminDashboard: React.FC = () => {
       await fetchAllData();
       return newGrade;
     } catch (error: any) {
-      setError(`Failed to create grade: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to create grade: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -505,7 +699,11 @@ const AdminDashboard: React.FC = () => {
       await fetchAllData();
       return updatedGrade;
     } catch (error: any) {
-      setError(`Failed to update grade: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to update grade: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -519,7 +717,11 @@ const AdminDashboard: React.FC = () => {
       // Recalculate average grade
       await fetchAllData();
     } catch (error: any) {
-      setError(`Failed to delete grade: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to delete grade: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -533,7 +735,11 @@ const AdminDashboard: React.FC = () => {
       const results = await studentAPI.searchStudents(keyword);
       return results;
     } catch (error: any) {
-      setError(`Failed to search students: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to search students: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -546,7 +752,11 @@ const AdminDashboard: React.FC = () => {
       const results = await studentAPI.getStudentsByDepartment(department);
       return results;
     } catch (error: any) {
-      setError(`Failed to get students by department: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to get students by department: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -559,7 +769,11 @@ const AdminDashboard: React.FC = () => {
       const results = await enrollmentAPI.getEnrollmentsByCourse(courseId);
       return results;
     } catch (error: any) {
-      setError(`Failed to get enrollments by course: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to get enrollments by course: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -572,7 +786,11 @@ const AdminDashboard: React.FC = () => {
       const results = await gradeAPI.getGradesByStudent(studentId);
       return results;
     } catch (error: any) {
-      setError(`Failed to get grades by student: ${error.response?.data?.message || error.message}`);
+      setError(
+        `Failed to get grades by student: ${
+          error.response?.data?.message || error.message
+        }`
+      );
       throw error;
     } finally {
       setLoading(false);
@@ -584,7 +802,10 @@ const AdminDashboard: React.FC = () => {
       const average = await gradeAPI.getAverageGradeByStudent(studentId);
       return average;
     } catch (error: any) {
-      console.warn(`Failed to get average grade for student ${studentId}:`, error);
+      console.warn(
+        `Failed to get average grade for student ${studentId}:`,
+        error
+      );
       return 0;
     }
   };
@@ -594,7 +815,10 @@ const AdminDashboard: React.FC = () => {
       const average = await gradeAPI.getAverageGradeByCourse(courseId);
       return average;
     } catch (error: any) {
-      console.warn(`Failed to get average grade for course ${courseId}:`, error);
+      console.warn(
+        `Failed to get average grade for course ${courseId}:`,
+        error
+      );
       return 0;
     }
   };
@@ -661,43 +885,46 @@ const AdminDashboard: React.FC = () => {
 
   // Course Modal Handlers
   const handleOpenCourseModal = () => {
-  setIsEditingCourse(false);
-  setEditingCourseId(null);
-  setCourseFormData({ code: '', title: '', description: '', credits: '' });
-  setCourseFormErrors({});
-  setOpenCourseModal(true);
+    setIsEditingCourse(false);
+    setEditingCourseId(null);
+    setCourseFormData({ code: "", title: "", description: "", credits: "" });
+    setCourseFormErrors({});
+    setOpenCourseModal(true);
   };
 
   const handleCloseCourseModal = () => {
     setOpenCourseModal(false);
-    setCourseFormData({ code: '', title: '', description: '', credits: '' });
+    setCourseFormData({ code: "", title: "", description: "", credits: "" });
     setCourseFormErrors({});
   };
 
   const handleCourseFormChange = (field: string, value: string) => {
-    setCourseFormData(prev => ({ ...prev, [field]: value }));
+    setCourseFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (courseFormErrors[field]) {
-      setCourseFormErrors(prev => ({ ...prev, [field]: '' }));
+      setCourseFormErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const validateCourseForm = () => {
-    const errors: {[key: string]: string} = {};
-    
+    const errors: { [key: string]: string } = {};
+
     if (!courseFormData.code.trim()) {
-      errors.code = 'Course code is required';
+      errors.code = "Course code is required";
     }
     if (!courseFormData.title.trim()) {
-      errors.title = 'Course title is required';
+      errors.title = "Course title is required";
     }
     if (!courseFormData.description.trim()) {
-      errors.description = 'Course description is required';
+      errors.description = "Course description is required";
     }
     if (!courseFormData.credits.trim()) {
-      errors.credits = 'Credits is required';
-    } else if (isNaN(Number(courseFormData.credits)) || Number(courseFormData.credits) <= 0) {
-      errors.credits = 'Credits must be a positive number';
+      errors.credits = "Credits is required";
+    } else if (
+      isNaN(Number(courseFormData.credits)) ||
+      Number(courseFormData.credits) <= 0
+    ) {
+      errors.credits = "Credits must be a positive number";
     }
 
     setCourseFormErrors(errors);
@@ -714,25 +941,25 @@ const AdminDashboard: React.FC = () => {
         code: courseFormData.code.trim(),
         title: courseFormData.title.trim(),
         description: courseFormData.description.trim(),
-        credits: Number(courseFormData.credits)
+        credits: Number(courseFormData.credits),
       };
 
       // If editing, call update; otherwise create
       if (isEditingCourse && editingCourseId) {
         await updateCourse(editingCourseId, courseData);
-        setSnackbarMessage('Course updated successfully!');
+        setSnackbarMessage("Course updated successfully!");
       } else {
         await createCourse(courseData);
-        setSnackbarMessage('Course created successfully!');
+        setSnackbarMessage("Course created successfully!");
       }
       handleCloseCourseModal();
       setIsEditingCourse(false);
       setEditingCourseId(null);
-      setSnackbarSeverity('success');
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
-      setSnackbarMessage('Failed to create course. Please try again.');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to create course. Please try again.");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -742,10 +969,10 @@ const AdminDashboard: React.FC = () => {
     setIsEditingCourse(true);
     setEditingCourseId(course.id ?? null);
     setCourseFormData({
-      code: course.code || '',
-      title: course.title || '',
-      description: course.description || '',
-      credits: course.credits ? String(course.credits) : ''
+      code: course.code || "",
+      title: course.title || "",
+      description: course.description || "",
+      credits: course.credits ? String(course.credits) : "",
     });
     setCourseFormErrors({});
     setOpenCourseModal(true);
@@ -755,12 +982,12 @@ const AdminDashboard: React.FC = () => {
     if (!courseId) return;
     try {
       await deleteCourse(courseId);
-      setSnackbarMessage('Course deleted successfully');
-      setSnackbarSeverity('success');
+      setSnackbarMessage("Course deleted successfully");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (err) {
-      setSnackbarMessage('Failed to delete course');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to delete course");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -773,8 +1000,8 @@ const AdminDashboard: React.FC = () => {
       setSelectedCourseDetails(details);
       setOpenCourseDetails(true);
     } catch (err: any) {
-      setSnackbarMessage('Failed to fetch course details');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to fetch course details");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
       setLoading(false);
@@ -1033,44 +1260,69 @@ const AdminDashboard: React.FC = () => {
                 <Box
                   key={course.id}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     gap: 2,
                     p: 2,
-                    borderBottom: '1px solid rgba(0,0,0,0.06)'
+                    borderBottom: "1px solid rgba(0,0,0,0.06)",
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <Chip label={course.code} color="primary" />
                     <Box>
                       <Typography variant="subtitle1">
                         {course.title}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {course.description || 'No description available'}
+                        {course.description || "No description available"}
                       </Typography>
                     </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
-                      {course.credits ? `${course.credits} Credits` : 'Credits TBD'}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mr: 2 }}
+                    >
+                      {course.credits
+                        ? `${course.credits} Credits`
+                        : "Credits TBD"}
                     </Typography>
-                    <Button size="small" variant="outlined" onClick={() => handleOpenEditCourseModal(course)}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => handleOpenEditCourseModal(course)}
+                    >
                       Edit
                     </Button>
-                    <Button size="small" variant="outlined" color="error" onClick={() => handleDeleteCourseClick(course.id)}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteCourseClick(course.id)}
+                    >
                       Delete
                     </Button>
-                    <Button size="small" variant="outlined" color="info" onClick={() => handleViewCourseDetails(course.id)}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="info"
+                      onClick={() => handleViewCourseDetails(course.id)}
+                    >
                       View Details
                     </Button>
                   </Box>
                 </Box>
               ))}
               {courses.length === 0 && (
-                <Typography variant="body1" color="text.secondary" textAlign="center" py={4}>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  textAlign="center"
+                  py={4}
+                >
                   No courses available.
                 </Typography>
               )}
@@ -1239,20 +1491,20 @@ const AdminDashboard: React.FC = () => {
       </Container>
 
       {/* Course Creation Modal */}
-      <Dialog 
-        open={openCourseModal} 
+      <Dialog
+        open={openCourseModal}
         onClose={handleCloseCourseModal}
         maxWidth="sm"
         fullWidth
       >
         <DialogTitle>Create New Course</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
             <TextField
               fullWidth
               label="Course Code"
               value={courseFormData.code}
-              onChange={(e) => handleCourseFormChange('code', e.target.value)}
+              onChange={(e) => handleCourseFormChange("code", e.target.value)}
               error={!!courseFormErrors.code}
               helperText={courseFormErrors.code}
               placeholder="e.g., CS101"
@@ -1261,7 +1513,7 @@ const AdminDashboard: React.FC = () => {
               fullWidth
               label="Course Title"
               value={courseFormData.title}
-              onChange={(e) => handleCourseFormChange('title', e.target.value)}
+              onChange={(e) => handleCourseFormChange("title", e.target.value)}
               error={!!courseFormErrors.title}
               helperText={courseFormErrors.title}
               placeholder="e.g., Introduction to Programming"
@@ -1272,7 +1524,9 @@ const AdminDashboard: React.FC = () => {
               rows={3}
               label="Description"
               value={courseFormData.description}
-              onChange={(e) => handleCourseFormChange('description', e.target.value)}
+              onChange={(e) =>
+                handleCourseFormChange("description", e.target.value)
+              }
               error={!!courseFormErrors.description}
               helperText={courseFormErrors.description}
               placeholder="Course description..."
@@ -1282,7 +1536,9 @@ const AdminDashboard: React.FC = () => {
               type="number"
               label="Credits"
               value={courseFormData.credits}
-              onChange={(e) => handleCourseFormChange('credits', e.target.value)}
+              onChange={(e) =>
+                handleCourseFormChange("credits", e.target.value)
+              }
               error={!!courseFormErrors.credits}
               helperText={courseFormErrors.credits}
               placeholder="e.g., 3"
@@ -1292,26 +1548,40 @@ const AdminDashboard: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCourseModal}>Cancel</Button>
-          <Button 
+          <Button
             onClick={handleCreateCourse}
             variant="contained"
             disabled={loading}
           >
-            {loading ? <CircularProgress size={20} /> : 'Create Course'}
+            {loading ? <CircularProgress size={20} /> : "Create Course"}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Course Details Dialog */}
-      <Dialog open={openCourseDetails} onClose={handleCloseCourseDetails} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openCourseDetails}
+        onClose={handleCloseCourseDetails}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Course Details</DialogTitle>
         <DialogContent>
           {selectedCourseDetails ? (
             <Box sx={{ mt: 1 }}>
-              <Typography variant="h6">{selectedCourseDetails.title}</Typography>
-              <Typography variant="subtitle2" color="text.secondary">{selectedCourseDetails.code}</Typography>
-              <Typography sx={{ mt: 2 }}>{selectedCourseDetails.description}</Typography>
-              <Typography sx={{ mt: 2 }}><strong>Credits:</strong> {selectedCourseDetails.credits ?? 'TBD'}</Typography>
+              <Typography variant="h6">
+                {selectedCourseDetails.title}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                {selectedCourseDetails.code}
+              </Typography>
+              <Typography sx={{ mt: 2 }}>
+                {selectedCourseDetails.description}
+              </Typography>
+              <Typography sx={{ mt: 2 }}>
+                <strong>Credits:</strong>{" "}
+                {selectedCourseDetails.credits ?? "TBD"}
+              </Typography>
             </Box>
           ) : (
             <Typography>Loading...</Typography>
@@ -1327,12 +1597,12 @@ const AdminDashboard: React.FC = () => {
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={handleCloseSnackbar}
           severity={snackbarSeverity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

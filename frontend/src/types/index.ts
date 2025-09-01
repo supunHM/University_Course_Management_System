@@ -6,6 +6,7 @@ export interface User {
   role: "ADMIN" | "STUDENT";
   firstName?: string;
   lastName?: string;
+  studentId?: string;
 }
 
 export interface AuthResponse {

@@ -248,6 +248,14 @@ export const enrollmentAPI = {
   deleteEnrollment: async (id: number): Promise<void> => {
     await api.delete(`/enrollments/${id}`);
   },
+
+  // Self-enrollment for students
+  selfEnroll: async (courseId: number): Promise<Enrollment> => {
+    const response: AxiosResponse<Enrollment> = await api.post(
+      `/enrollments/self-enroll/${courseId}`
+    );
+    return response.data;
+  },
 };
 
 // Grade API

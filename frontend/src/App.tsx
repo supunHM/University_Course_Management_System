@@ -12,6 +12,7 @@ import Login from "./components/Login";
 import SimpleRegister from "./components/SimpleRegister";
 import SimpleDashboard from "./components/SimpleDashboard";
 import AdminDashboard from "./components/AdminDashboardSimple";
+import SelfEnrollment from "./components/SelfEnrollment";
 import { CircularProgress, Box } from "@mui/material";
 
 // Create Material-UI theme
@@ -180,6 +181,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardRouter />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Self-Enrollment Route for Students */}
+            <Route
+              path="/enrollment"
+              element={
+                <ProtectedRoute>
+                  <SelfEnrollment />
                 </ProtectedRoute>
               }
             />

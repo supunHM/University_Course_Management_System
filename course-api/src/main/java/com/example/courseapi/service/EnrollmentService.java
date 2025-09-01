@@ -18,6 +18,7 @@ import com.example.courseapi.exception.StudentNotFoundException;
 import com.example.courseapi.repository.CourseRepository;
 import com.example.courseapi.repository.EnrollmentRepository;
 import com.example.courseapi.repository.StudentRepository;
+import com.example.courseapi.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
     private final StudentService studentService;
     private final CourseService courseService;
     
@@ -125,6 +127,46 @@ public class EnrollmentService {
     
     public Long getEnrollmentCountByStudent(Long studentId) {
         return enrollmentRepository.countByStudentId(studentId);
+    }
+    
+    public EnrollmentResponse selfEnrollment(String username, Long courseId) {
+        log.info("Processing self-enrollment for user: {} in course: {}", username, courseId);
+        
+        // Find the user by username
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        
+        // Find the associated student record using the user's studentId
+        if (user.getStudentId() == null) {
+            throw new RuntimeException("User is not associated with a student record");
+        }
+        
+        Student student = studentRepository.findByStudentId(user.getStudentId())
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with studentId: " + user.getStudentId()));
+        
+        // Check if course exists
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException("Course not found with id: " + courseId));
+        
+        // Check if already enrolled
+        if (enrollmentRepository.existsByStudentIdAndCourseId(student.getId(), courseId)) {
+            throw new RuntimeException("You are already enrolled in this course");
+        }
+        
+        // Create enrollment with current semester and year (you can make these dynamic)
+        Enrollment enrollment = Enrollment.builder()
+                .student(student)
+                .course(course)
+                .enrollmentDate(LocalDateTime.now())
+                .semester("Fall") // TODO: Make this dynamic based on current semester
+                .academicYear("2025") // TODO: Make this dynamic based on current academic year
+                .status(Enrollment.EnrollmentStatus.ENROLLED)
+                .build();
+        
+        Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
+        log.info("Self-enrollment successful for user: {} in course: {}", username, courseId);
+        
+        return mapToEnrollmentResponse(savedEnrollment);
     }
     
     private EnrollmentResponse mapToEnrollmentResponse(Enrollment enrollment) {

@@ -181,6 +181,14 @@ Complete API endpoints for testing with Postman. Base URL: `http://localhost:808
 - **Method**: GET
 - **URL**: `/api/enrollments/count/student/{studentId}`
 
+### 10. Self-Enrollment (Student Only)
+
+- **Method**: POST
+- **URL**: `/api/enrollments/self-enroll/{courseId}`
+- **Headers**: `Authorization: Bearer {token}`
+- **Example**: `/api/enrollments/self-enroll/1`
+- **Description**: Allows authenticated students to enroll themselves in courses
+
 ---
 
 ## 📊 GRADE API ENDPOINTS

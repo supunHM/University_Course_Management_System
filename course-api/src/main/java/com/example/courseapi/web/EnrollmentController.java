@@ -22,6 +22,8 @@ import com.example.courseapi.service.EnrollmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/api/enrollments")
@@ -66,6 +68,16 @@ public class EnrollmentController {
                 request.getStudentId(), request.getCourseId());
         EnrollmentResponse createdEnrollment = enrollmentService.createEnrollment(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEnrollment);
+    }
+    
+    @PostMapping("/self-enroll/{courseId}")
+    public ResponseEntity<EnrollmentResponse> selfEnroll(@PathVariable Long courseId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        
+        log.info("POST /api/enrollments/self-enroll/{} - Student {} self-enrolling in course", courseId, username);
+        EnrollmentResponse enrollment = enrollmentService.selfEnrollment(username, courseId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(enrollment);
     }
     
     @PutMapping("/{id}/status")

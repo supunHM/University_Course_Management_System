@@ -184,7 +184,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
+
             {/* Self-Enrollment Route for Students */}
             <Route
               path="/enrollment"

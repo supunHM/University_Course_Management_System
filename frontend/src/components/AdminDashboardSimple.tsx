@@ -141,17 +141,28 @@ const AdminDashboard: React.FC = () => {
     yearOfStudy: "",
     enrollmentDate: "",
   });
-  const [studentFormErrors, setStudentFormErrors] = useState<{ [key: string]: string }>({});
+  const [studentFormErrors, setStudentFormErrors] = useState<{
+    [key: string]: string;
+  }>({});
   const [isEditingStudent, setIsEditingStudent] = useState(false);
   const [editingStudentId, setEditingStudentId] = useState<number | null>(null);
   const [openStudentDetails, setOpenStudentDetails] = useState(false);
-  const [selectedStudentDetails, setSelectedStudentDetails] = useState<Student | null>(null);
+  const [selectedStudentDetails, setSelectedStudentDetails] =
+    useState<Student | null>(null);
   // Enrollment states
   const [openEnrollmentModal, setOpenEnrollmentModal] = useState(false);
-  const [enrollmentFormData, setEnrollmentFormData] = useState({ studentId: '', courseId: '', semester: 'Fall', academicYear: '2025' });
-  const [enrollmentFormErrors, setEnrollmentFormErrors] = useState<{[key:string]: string}>({});
+  const [enrollmentFormData, setEnrollmentFormData] = useState({
+    studentId: "",
+    courseId: "",
+    semester: "Fall",
+    academicYear: "2025",
+  });
+  const [enrollmentFormErrors, setEnrollmentFormErrors] = useState<{
+    [key: string]: string;
+  }>({});
   const [openEnrollmentDetails, setOpenEnrollmentDetails] = useState(false);
-  const [selectedEnrollmentDetails, setSelectedEnrollmentDetails] = useState<Enrollment | null>(null);
+  const [selectedEnrollmentDetails, setSelectedEnrollmentDetails] =
+    useState<Enrollment | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
@@ -184,9 +195,9 @@ const AdminDashboard: React.FC = () => {
         grades: gradesData.length,
       });
 
-  setCourses(coursesData);
-  setStudents(studentsData);
-  setEnrollments(enrollmentsData);
+      setCourses(coursesData);
+      setStudents(studentsData);
+      setEnrollments(enrollmentsData);
 
       // Calculate real stats from API data
       const totalGradePoints = gradesData.reduce(
@@ -929,14 +940,36 @@ const AdminDashboard: React.FC = () => {
   const handleOpenStudentModal = () => {
     setIsEditingStudent(false);
     setEditingStudentId(null);
-    setStudentFormData({ studentId: "", firstName: "", lastName: "", email: "", phoneNumber: "", dateOfBirth: "", address: "", department: "", yearOfStudy: "", enrollmentDate: "" });
+    setStudentFormData({
+      studentId: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      dateOfBirth: "",
+      address: "",
+      department: "",
+      yearOfStudy: "",
+      enrollmentDate: "",
+    });
     setStudentFormErrors({});
     setOpenStudentModal(true);
   };
 
   const handleCloseStudentModal = () => {
     setOpenStudentModal(false);
-    setStudentFormData({ studentId: "", firstName: "", lastName: "", email: "", phoneNumber: "", dateOfBirth: "", address: "", department: "", yearOfStudy: "", enrollmentDate: "" });
+    setStudentFormData({
+      studentId: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      dateOfBirth: "",
+      address: "",
+      department: "",
+      yearOfStudy: "",
+      enrollmentDate: "",
+    });
     setStudentFormErrors({});
   };
 
@@ -949,14 +982,27 @@ const AdminDashboard: React.FC = () => {
 
   const validateStudentForm = () => {
     const errors: { [key: string]: string } = {};
-    if (!studentFormData.studentId.trim()) errors.studentId = 'Student ID is required';
-    if (!studentFormData.firstName.trim()) errors.firstName = 'First name is required';
-    if (!studentFormData.lastName.trim()) errors.lastName = 'Last name is required';
-    if (!studentFormData.email.trim()) errors.email = 'Email is required';
+    if (!studentFormData.studentId.trim())
+      errors.studentId = "Student ID is required";
+    if (!studentFormData.firstName.trim())
+      errors.firstName = "First name is required";
+    if (!studentFormData.lastName.trim())
+      errors.lastName = "Last name is required";
+    if (!studentFormData.email.trim()) errors.email = "Email is required";
     // basic email check
-    if (studentFormData.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(studentFormData.email)) errors.email = 'Invalid email';
-    if (!studentFormData.department.trim()) errors.department = 'Department is required';
-    if (!studentFormData.yearOfStudy.trim() || isNaN(Number(studentFormData.yearOfStudy)) || Number(studentFormData.yearOfStudy) <= 0) errors.yearOfStudy = 'Year of study must be a positive number';
+    if (
+      studentFormData.email &&
+      !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(studentFormData.email)
+    )
+      errors.email = "Invalid email";
+    if (!studentFormData.department.trim())
+      errors.department = "Department is required";
+    if (
+      !studentFormData.yearOfStudy.trim() ||
+      isNaN(Number(studentFormData.yearOfStudy)) ||
+      Number(studentFormData.yearOfStudy) <= 0
+    )
+      errors.yearOfStudy = "Year of study must be a positive number";
     setStudentFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -979,20 +1025,20 @@ const AdminDashboard: React.FC = () => {
 
       if (isEditingStudent && editingStudentId) {
         await updateStudent(editingStudentId, payload as any);
-        setSnackbarMessage('Student updated successfully');
+        setSnackbarMessage("Student updated successfully");
       } else {
         await createStudent(payload as any);
-        setSnackbarMessage('Student created successfully');
+        setSnackbarMessage("Student created successfully");
       }
 
-      setSnackbarSeverity('success');
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
       handleCloseStudentModal();
       setIsEditingStudent(false);
       setEditingStudentId(null);
     } catch (err) {
-      setSnackbarMessage('Failed to save student');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to save student");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -1001,16 +1047,16 @@ const AdminDashboard: React.FC = () => {
     setIsEditingStudent(true);
     setEditingStudentId(student.id ?? null);
     setStudentFormData({
-      studentId: student.studentId || '',
-      firstName: student.firstName || '',
-      lastName: student.lastName || '',
-      email: student.email || '',
-      phoneNumber: student.phoneNumber || '',
-      dateOfBirth: student.dateOfBirth || '',
-      address: student.address || '',
-      department: student.department || '',
-      yearOfStudy: student.yearOfStudy ? String(student.yearOfStudy) : '',
-      enrollmentDate: student.enrollmentDate || '',
+      studentId: student.studentId || "",
+      firstName: student.firstName || "",
+      lastName: student.lastName || "",
+      email: student.email || "",
+      phoneNumber: student.phoneNumber || "",
+      dateOfBirth: student.dateOfBirth || "",
+      address: student.address || "",
+      department: student.department || "",
+      yearOfStudy: student.yearOfStudy ? String(student.yearOfStudy) : "",
+      enrollmentDate: student.enrollmentDate || "",
     });
     setStudentFormErrors({});
     setOpenStudentModal(true);
@@ -1020,12 +1066,12 @@ const AdminDashboard: React.FC = () => {
     if (!studentId) return;
     try {
       await deleteStudent(studentId);
-      setSnackbarMessage('Student deleted successfully');
-      setSnackbarSeverity('success');
+      setSnackbarMessage("Student deleted successfully");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (err) {
-      setSnackbarMessage('Failed to delete student');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to delete student");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -1038,8 +1084,8 @@ const AdminDashboard: React.FC = () => {
       setSelectedStudentDetails(details);
       setOpenStudentDetails(true);
     } catch (err) {
-      setSnackbarMessage('Failed to fetch student details');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to fetch student details");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
       setLoading(false);
@@ -1054,13 +1100,14 @@ const AdminDashboard: React.FC = () => {
   // Enrollment handlers
   const handleEnrollmentFormChange = (field: string, value: string) => {
     setEnrollmentFormData((prev) => ({ ...prev, [field]: value }));
-    if (enrollmentFormErrors[field]) setEnrollmentFormErrors((prev) => ({ ...prev, [field]: '' }));
+    if (enrollmentFormErrors[field])
+      setEnrollmentFormErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const validateEnrollmentForm = () => {
-    const errors: {[key:string]: string} = {};
-    if (!enrollmentFormData.studentId) errors.studentId = 'Student is required';
-    if (!enrollmentFormData.courseId) errors.courseId = 'Course is required';
+    const errors: { [key: string]: string } = {};
+    if (!enrollmentFormData.studentId) errors.studentId = "Student is required";
+    if (!enrollmentFormData.courseId) errors.courseId = "Course is required";
     setEnrollmentFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -1072,16 +1119,16 @@ const AdminDashboard: React.FC = () => {
         studentId: Number(enrollmentFormData.studentId),
         courseId: Number(enrollmentFormData.courseId),
         semester: enrollmentFormData.semester,
-        academicYear: enrollmentFormData.academicYear
+        academicYear: enrollmentFormData.academicYear,
       };
       await createEnrollment(payload as any);
-      setSnackbarMessage('Enrollment created');
-      setSnackbarSeverity('success');
+      setSnackbarMessage("Enrollment created");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
       setOpenEnrollmentModal(false);
     } catch (err) {
-      setSnackbarMessage('Failed to create enrollment');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to create enrollment");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -1094,8 +1141,8 @@ const AdminDashboard: React.FC = () => {
       setSelectedEnrollmentDetails(details);
       setOpenEnrollmentDetails(true);
     } catch (err) {
-      setSnackbarMessage('Failed to fetch enrollment details');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to fetch enrollment details");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
       setLoading(false);
@@ -1106,29 +1153,32 @@ const AdminDashboard: React.FC = () => {
     if (!enrollmentId) return;
     try {
       await deleteEnrollment(enrollmentId);
-      setSnackbarMessage('Enrollment deleted');
-      setSnackbarSeverity('success');
+      setSnackbarMessage("Enrollment deleted");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (err) {
-      setSnackbarMessage('Failed to delete enrollment');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to delete enrollment");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
 
-  const handleUpdateEnrollmentStatus = async (enrollmentId?: number, status?: string) => {
+  const handleUpdateEnrollmentStatus = async (
+    enrollmentId?: number,
+    status?: string
+  ) => {
     if (!enrollmentId || !status) return;
     try {
       await updateEnrollmentStatus(enrollmentId, status as any);
-      setSnackbarMessage('Enrollment status updated');
-      setSnackbarSeverity('success');
+      setSnackbarMessage("Enrollment status updated");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
       // refresh enrollments
       const all = await enrollmentAPI.getAllEnrollments();
       setEnrollments(all);
     } catch (err) {
-      setSnackbarMessage('Failed to update status');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("Failed to update status");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -1586,7 +1636,7 @@ const AdminDashboard: React.FC = () => {
             <Button
               variant="contained"
               startIcon={<Add />}
-                onClick={() => handleOpenStudentModal()}
+              onClick={() => handleOpenStudentModal()}
             >
               Add New Student
             </Button>
@@ -1609,8 +1659,9 @@ const AdminDashboard: React.FC = () => {
                     }}
                   >
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                      <Avatar sx={{ bgcolor: 'primary.main' }}>
-                        {student.firstName?.charAt(0)}{student.lastName?.charAt(0)}
+                      <Avatar sx={{ bgcolor: "primary.main" }}>
+                        {student.firstName?.charAt(0)}
+                        {student.lastName?.charAt(0)}
                       </Avatar>
                       <Box>
                         <Typography variant="subtitle1">
@@ -1623,24 +1674,48 @@ const AdminDashboard: React.FC = () => {
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
-                        {student.department || 'Not specified'}
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mr: 2 }}
+                      >
+                        {student.department || "Not specified"}
                       </Typography>
-                      <Button size="small" variant="outlined" onClick={() => handleOpenEditStudentModal(student)}>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => handleOpenEditStudentModal(student)}
+                      >
                         Edit
                       </Button>
-                      <Button size="small" variant="outlined" color="error" onClick={() => handleDeleteStudentClick(student.id)}>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDeleteStudentClick(student.id)}
+                      >
                         Delete
                       </Button>
-                      <Button size="small" variant="outlined" color="info" onClick={() => handleViewStudentDetails(student.id)}>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="info"
+                        onClick={() => handleViewStudentDetails(student.id)}
+                      >
                         View Details
                       </Button>
                     </Box>
                   </Box>
                 ))
               ) : (
-                <Typography variant="body1" color="text.secondary" textAlign="center" py={4}>
-                  No students found. Student data will appear here once the student API endpoints are available.
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  textAlign="center"
+                  py={4}
+                >
+                  No students found. Student data will appear here once the
+                  student API endpoints are available.
                 </Typography>
               )}
             </Box>
@@ -1664,7 +1739,7 @@ const AdminDashboard: React.FC = () => {
               variant="contained"
               startIcon={<Add />}
               onClick={() => {
-                    setOpenEnrollmentModal(true);
+                setOpenEnrollmentModal(true);
               }}
             >
               New Enrollment
@@ -1672,26 +1747,75 @@ const AdminDashboard: React.FC = () => {
           </Box>
 
           <Paper sx={{ p: 3 }}>
-              {/* Enrollment rows */}
-              <Box>
-                {enrollments.length > 0 ? (
-                  enrollments.map((enr) => (
-                    <Box key={enr.id} sx={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:2, p:2, borderBottom:'1px solid rgba(0,0,0,0.06)' }}>
-                      <Box>
-                        <Typography variant="subtitle1">{enr.course?.title || `Course #${enr.course?.id ?? ''}`}</Typography>
-                        <Typography variant="body2" color="text.secondary">Student: {enr.student?.studentId || `${enr.student?.firstName} ${enr.student?.lastName}` || `#${enr.student?.id ?? ''}`} • Semester: {enr.semester} {enr.academicYear}</Typography>
-                      </Box>
-                      <Box sx={{ display:'flex', gap:1 }}>
-                        <Button size="small" variant="outlined" onClick={() => handleViewEnrollmentDetails(enr.id)}>Details</Button>
-                        <Button size="small" variant="outlined" onClick={() => handleUpdateEnrollmentStatus(enr.id, enr.status === 'ACTIVE' ? 'DROPPED' : 'ACTIVE')}>Toggle Status</Button>
-                        <Button size="small" variant="outlined" color="error" onClick={() => handleDeleteEnrollmentClick(enr.id)}>Delete</Button>
-                      </Box>
+            {/* Enrollment rows */}
+            <Box>
+              {enrollments.length > 0 ? (
+                enrollments.map((enr) => (
+                  <Box
+                    key={enr.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 2,
+                      p: 2,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                        {enr.course?.title || `Course #${enr.course?.id ?? ""}`}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Student:{" "}
+                        {enr.student?.studentId ||
+                          `${enr.student?.firstName} ${enr.student?.lastName}` ||
+                          `#${enr.student?.id ?? ""}`}{" "}
+                        • Semester: {enr.semester} {enr.academicYear}
+                      </Typography>
                     </Box>
-                  ))
-                ) : (
-                  <Typography variant="body1" color="text.secondary" textAlign="center" py={4}>No enrollments available.</Typography>
-                )}
-              </Box>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => handleViewEnrollmentDetails(enr.id)}
+                      >
+                        Details
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() =>
+                          handleUpdateEnrollmentStatus(
+                            enr.id,
+                            enr.status === "ACTIVE" ? "DROPPED" : "ACTIVE"
+                          )
+                        }
+                      >
+                        Toggle Status
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDeleteEnrollmentClick(enr.id)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </Box>
+                ))
+              ) : (
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  textAlign="center"
+                  py={4}
+                >
+                  No enrollments available.
+                </Typography>
+              )}
+            </Box>
           </Paper>
         </TabPanel>
 
@@ -1837,18 +1961,38 @@ const AdminDashboard: React.FC = () => {
 
       {/* Success/Error Snackbar */}
       {/* Student Details Dialog */}
-      <Dialog open={openStudentDetails} onClose={handleCloseStudentDetails} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openStudentDetails}
+        onClose={handleCloseStudentDetails}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Student Details</DialogTitle>
         <DialogContent>
           {selectedStudentDetails ? (
             <Box sx={{ mt: 1 }}>
-              <Typography variant="h6">{selectedStudentDetails.firstName} {selectedStudentDetails.lastName}</Typography>
-              <Typography variant="subtitle2" color="text.secondary">ID: {selectedStudentDetails.studentId}</Typography>
-              <Typography sx={{ mt: 1 }}>Email: {selectedStudentDetails.email}</Typography>
-              <Typography sx={{ mt: 1 }}>Department: {selectedStudentDetails.department}</Typography>
-              <Typography sx={{ mt: 1 }}>Year: {selectedStudentDetails.yearOfStudy}</Typography>
-              <Typography sx={{ mt: 1 }}>Phone: {selectedStudentDetails.phoneNumber || 'N/A'}</Typography>
-              <Typography sx={{ mt: 1 }}>Address: {selectedStudentDetails.address || 'N/A'}</Typography>
+              <Typography variant="h6">
+                {selectedStudentDetails.firstName}{" "}
+                {selectedStudentDetails.lastName}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                ID: {selectedStudentDetails.studentId}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Email: {selectedStudentDetails.email}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Department: {selectedStudentDetails.department}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Year: {selectedStudentDetails.yearOfStudy}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Phone: {selectedStudentDetails.phoneNumber || "N/A"}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Address: {selectedStudentDetails.address || "N/A"}
+              </Typography>
             </Box>
           ) : (
             <Typography>Loading...</Typography>
@@ -1860,38 +2004,155 @@ const AdminDashboard: React.FC = () => {
       </Dialog>
 
       {/* Student Create/Edit Modal */}
-      <Dialog open={openStudentModal} onClose={handleCloseStudentModal} maxWidth="md" fullWidth>
-        <DialogTitle>{isEditingStudent ? 'Edit Student' : 'Create Student'}</DialogTitle>
+      <Dialog
+        open={openStudentModal}
+        onClose={handleCloseStudentModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          {isEditingStudent ? "Edit Student" : "Create Student"}
+        </DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mt: 1 }}>
-            <TextField label="Student ID" value={studentFormData.studentId} onChange={(e) => handleStudentFormChange('studentId', e.target.value)} error={!!studentFormErrors.studentId} helperText={studentFormErrors.studentId} />
-            <TextField label="First Name" value={studentFormData.firstName} onChange={(e) => handleStudentFormChange('firstName', e.target.value)} error={!!studentFormErrors.firstName} helperText={studentFormErrors.firstName} />
-            <TextField label="Last Name" value={studentFormData.lastName} onChange={(e) => handleStudentFormChange('lastName', e.target.value)} error={!!studentFormErrors.lastName} helperText={studentFormErrors.lastName} />
-            <TextField label="Email" value={studentFormData.email} onChange={(e) => handleStudentFormChange('email', e.target.value)} error={!!studentFormErrors.email} helperText={studentFormErrors.email} />
-            <TextField label="Phone" value={studentFormData.phoneNumber} onChange={(e) => handleStudentFormChange('phoneNumber', e.target.value)} />
-            <TextField label="Department" value={studentFormData.department} onChange={(e) => handleStudentFormChange('department', e.target.value)} error={!!studentFormErrors.department} helperText={studentFormErrors.department} />
-            <TextField label="Year of Study" type="number" value={studentFormData.yearOfStudy} onChange={(e) => handleStudentFormChange('yearOfStudy', e.target.value)} error={!!studentFormErrors.yearOfStudy} helperText={studentFormErrors.yearOfStudy} />
-            <TextField label="Enrollment Date" type="date" InputLabelProps={{ shrink: true }} value={studentFormData.enrollmentDate} onChange={(e) => handleStudentFormChange('enrollmentDate', e.target.value)} />
-            <TextField label="Date of Birth" type="date" InputLabelProps={{ shrink: true }} value={studentFormData.dateOfBirth} onChange={(e) => handleStudentFormChange('dateOfBirth', e.target.value)} />
-            <TextField label="Address" multiline rows={2} value={studentFormData.address} onChange={(e) => handleStudentFormChange('address', e.target.value)} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 2,
+              mt: 1,
+            }}
+          >
+            <TextField
+              label="Student ID"
+              value={studentFormData.studentId}
+              onChange={(e) =>
+                handleStudentFormChange("studentId", e.target.value)
+              }
+              error={!!studentFormErrors.studentId}
+              helperText={studentFormErrors.studentId}
+            />
+            <TextField
+              label="First Name"
+              value={studentFormData.firstName}
+              onChange={(e) =>
+                handleStudentFormChange("firstName", e.target.value)
+              }
+              error={!!studentFormErrors.firstName}
+              helperText={studentFormErrors.firstName}
+            />
+            <TextField
+              label="Last Name"
+              value={studentFormData.lastName}
+              onChange={(e) =>
+                handleStudentFormChange("lastName", e.target.value)
+              }
+              error={!!studentFormErrors.lastName}
+              helperText={studentFormErrors.lastName}
+            />
+            <TextField
+              label="Email"
+              value={studentFormData.email}
+              onChange={(e) => handleStudentFormChange("email", e.target.value)}
+              error={!!studentFormErrors.email}
+              helperText={studentFormErrors.email}
+            />
+            <TextField
+              label="Phone"
+              value={studentFormData.phoneNumber}
+              onChange={(e) =>
+                handleStudentFormChange("phoneNumber", e.target.value)
+              }
+            />
+            <TextField
+              label="Department"
+              value={studentFormData.department}
+              onChange={(e) =>
+                handleStudentFormChange("department", e.target.value)
+              }
+              error={!!studentFormErrors.department}
+              helperText={studentFormErrors.department}
+            />
+            <TextField
+              label="Year of Study"
+              type="number"
+              value={studentFormData.yearOfStudy}
+              onChange={(e) =>
+                handleStudentFormChange("yearOfStudy", e.target.value)
+              }
+              error={!!studentFormErrors.yearOfStudy}
+              helperText={studentFormErrors.yearOfStudy}
+            />
+            <TextField
+              label="Enrollment Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={studentFormData.enrollmentDate}
+              onChange={(e) =>
+                handleStudentFormChange("enrollmentDate", e.target.value)
+              }
+            />
+            <TextField
+              label="Date of Birth"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={studentFormData.dateOfBirth}
+              onChange={(e) =>
+                handleStudentFormChange("dateOfBirth", e.target.value)
+              }
+            />
+            <TextField
+              label="Address"
+              multiline
+              rows={2}
+              value={studentFormData.address}
+              onChange={(e) =>
+                handleStudentFormChange("address", e.target.value)
+              }
+            />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseStudentModal}>Cancel</Button>
-          <Button variant="contained" onClick={handleCreateStudent}>{loading ? <CircularProgress size={20} /> : isEditingStudent ? 'Update Student' : 'Create Student'}</Button>
+          <Button variant="contained" onClick={handleCreateStudent}>
+            {loading ? (
+              <CircularProgress size={20} />
+            ) : isEditingStudent ? (
+              "Update Student"
+            ) : (
+              "Create Student"
+            )}
+          </Button>
         </DialogActions>
       </Dialog>
 
       {/* Enrollment Details Dialog */}
-      <Dialog open={openEnrollmentDetails} onClose={handleCloseEnrollmentDetails} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openEnrollmentDetails}
+        onClose={handleCloseEnrollmentDetails}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Enrollment Details</DialogTitle>
         <DialogContent>
           {selectedEnrollmentDetails ? (
             <Box sx={{ mt: 1 }}>
-                <Typography variant="h6">{selectedEnrollmentDetails.course?.title || `Course #${selectedEnrollmentDetails.course?.id ?? ''}`}</Typography>
-                <Typography variant="subtitle2" color="text.secondary">Student: {selectedEnrollmentDetails.student?.studentId || `${selectedEnrollmentDetails.student?.firstName} ${selectedEnrollmentDetails.student?.lastName}` || `#${selectedEnrollmentDetails.student?.id ?? ''}`}</Typography>
-                <Typography sx={{ mt: 1 }}>Semester: {selectedEnrollmentDetails.semester} {selectedEnrollmentDetails.academicYear}</Typography>
-                <Typography sx={{ mt: 1 }}>Status: {selectedEnrollmentDetails.status}</Typography>
+              <Typography variant="h6">
+                {selectedEnrollmentDetails.course?.title ||
+                  `Course #${selectedEnrollmentDetails.course?.id ?? ""}`}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Student:{" "}
+                {selectedEnrollmentDetails.student?.studentId ||
+                  `${selectedEnrollmentDetails.student?.firstName} ${selectedEnrollmentDetails.student?.lastName}` ||
+                  `#${selectedEnrollmentDetails.student?.id ?? ""}`}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Semester: {selectedEnrollmentDetails.semester}{" "}
+                {selectedEnrollmentDetails.academicYear}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                Status: {selectedEnrollmentDetails.status}
+              </Typography>
             </Box>
           ) : (
             <Typography>Loading...</Typography>
@@ -1903,19 +2164,54 @@ const AdminDashboard: React.FC = () => {
       </Dialog>
 
       {/* Enrollment Create Modal */}
-      <Dialog open={openEnrollmentModal} onClose={() => setOpenEnrollmentModal(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openEnrollmentModal}
+        onClose={() => setOpenEnrollmentModal(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Create Enrollment</DialogTitle>
         <DialogContent>
-          <Box sx={{ display:'flex', flexDirection:'column', gap:2, mt:1 }}>
-            <TextField label="Student ID" value={enrollmentFormData.studentId} onChange={(e) => handleEnrollmentFormChange('studentId', e.target.value)} error={!!enrollmentFormErrors.studentId} helperText={enrollmentFormErrors.studentId} />
-            <TextField label="Course ID" value={enrollmentFormData.courseId} onChange={(e) => handleEnrollmentFormChange('courseId', e.target.value)} error={!!enrollmentFormErrors.courseId} helperText={enrollmentFormErrors.courseId} />
-            <TextField label="Semester" value={enrollmentFormData.semester} onChange={(e) => handleEnrollmentFormChange('semester', e.target.value)} />
-            <TextField label="Academic Year" value={enrollmentFormData.academicYear} onChange={(e) => handleEnrollmentFormChange('academicYear', e.target.value)} />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+            <TextField
+              label="Student ID"
+              value={enrollmentFormData.studentId}
+              onChange={(e) =>
+                handleEnrollmentFormChange("studentId", e.target.value)
+              }
+              error={!!enrollmentFormErrors.studentId}
+              helperText={enrollmentFormErrors.studentId}
+            />
+            <TextField
+              label="Course ID"
+              value={enrollmentFormData.courseId}
+              onChange={(e) =>
+                handleEnrollmentFormChange("courseId", e.target.value)
+              }
+              error={!!enrollmentFormErrors.courseId}
+              helperText={enrollmentFormErrors.courseId}
+            />
+            <TextField
+              label="Semester"
+              value={enrollmentFormData.semester}
+              onChange={(e) =>
+                handleEnrollmentFormChange("semester", e.target.value)
+              }
+            />
+            <TextField
+              label="Academic Year"
+              value={enrollmentFormData.academicYear}
+              onChange={(e) =>
+                handleEnrollmentFormChange("academicYear", e.target.value)
+              }
+            />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenEnrollmentModal(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleCreateEnrollmentSubmit}>Create</Button>
+          <Button variant="contained" onClick={handleCreateEnrollmentSubmit}>
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
 

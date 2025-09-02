@@ -2,6 +2,7 @@ package com.example.courseapi.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -105,7 +106,25 @@ public class EnrollmentService {
         Enrollment enrollment = enrollmentRepository.findById(id)
                 .orElseThrow(() -> new EnrollmentNotFoundException("Enrollment not found with id: " + id));
         
-        enrollment.setStatus(Enrollment.EnrollmentStatus.valueOf(status));
+        // Normalize and accept common synonyms from clients
+        String normalized = status == null ? "" : status.trim().toUpperCase();
+        // replace spaces with underscore to tolerate both "IN PROGRESS" and "IN_PROGRESS"
+        normalized = normalized.replace(' ', '_');
+
+        if ("ACTIVE".equals(normalized)) {
+            // some clients send ACTIVE when they mean ENROLLED
+            normalized = "ENROLLED";
+        } else if ("INPROGRESS".equals(normalized) || "IN_PROGRESS".equals(normalized) || "IN-PROGRESS".equals(normalized)) {
+            normalized = "IN_PROGRESS";
+        }
+
+        try {
+            Enrollment.EnrollmentStatus newStatus = Enrollment.EnrollmentStatus.valueOf(normalized);
+            enrollment.setStatus(newStatus);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid status: '" + status + "'. Allowed: " + Arrays.toString(Enrollment.EnrollmentStatus.values()));
+        }
+
         Enrollment updatedEnrollment = enrollmentRepository.save(enrollment);
         
         log.info("Enrollment status updated successfully for id: {}", id);

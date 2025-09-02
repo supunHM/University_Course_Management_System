@@ -26,6 +26,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { Add, Edit, Delete, Close } from "@mui/icons-material";
+import { useAuth } from "../contexts/AuthContext";
 import { gradeAPI, enrollmentAPI } from "../services/api";
 import type { Grade, Enrollment } from "../types";
 
@@ -194,6 +195,8 @@ const GradeManagement: React.FC = () => {
       </Box>
     );
 
+  const { isAdmin } = useAuth();
+
   return (
     <Box sx={{ p: 3 }}>
       <Stack
@@ -203,6 +206,15 @@ const GradeManagement: React.FC = () => {
         mb={2}
       >
         <Typography variant="h5">Grade Management</Typography>
+        {isAdmin() && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={openCreateDialog}
+          >
+            Create Grade
+          </Button>
+        )}
       </Stack>
 
       {alert.show && (

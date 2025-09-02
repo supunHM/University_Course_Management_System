@@ -132,6 +132,12 @@ const EnrollmentManagement: React.FC = () => {
 
   const handleCreateEnrollment = async () => {
     try {
+      // Validate that both studentId and courseId are selected
+      if (!newEnrollment.studentId || !newEnrollment.courseId) {
+        showAlert("Please select both student and course", "error");
+        return;
+      }
+
       await enrollmentAPI.createEnrollment({
         studentId: parseInt(newEnrollment.studentId),
         courseId: parseInt(newEnrollment.courseId),
@@ -193,28 +199,32 @@ const EnrollmentManagement: React.FC = () => {
   };
 
   const getStatusIcon = (status?: string) => {
-    switch (status?.toUpperCase()) {
+    const s = normalizeStatus(status);
+    switch (s) {
       case "ENROLLED":
-      case "ACTIVE":
         return <CheckCircle color="success" />;
       case "DROPPED":
         return <Cancel color="error" />;
       case "COMPLETED":
         return <CheckCircle color="primary" />;
+      case "IN_PROGRESS":
+        return <Pending color="warning" />;
       default:
         return <Pending color="warning" />;
     }
   };
 
   const getStatusColor = (status?: string) => {
-    switch (status?.toUpperCase()) {
+    const s = normalizeStatus(status);
+    switch (s) {
       case "ENROLLED":
-      case "ACTIVE":
         return "success";
       case "DROPPED":
         return "error";
       case "COMPLETED":
         return "primary";
+      case "IN_PROGRESS":
+        return "warning";
       default:
         return "warning";
     }
@@ -224,8 +234,37 @@ const EnrollmentManagement: React.FC = () => {
     return enrollments.some(
       (enrollment) =>
         enrollment.course?.id === courseId &&
-        (enrollment.status === "ENROLLED" || enrollment.status === "ACTIVE")
+        (normalizeStatus(enrollment.status) === "ENROLLED")
     );
+  };
+
+  // Normalize status strings from server or user input into canonical enum names
+  const normalizeStatus = (status?: string): string | undefined => {
+    if (!status) return undefined;
+    let s = status.toString().trim().toUpperCase();
+    s = s.replace(/\s+/g, "_").replace(/-/g, "_");
+    if (s === "ACTIVE") return "ENROLLED"; // legacy synonym
+    if (s === "INPROGRESS") return "IN_PROGRESS";
+    return s;
+  };
+
+  // Friendly display label for statuses
+  const displayStatus = (status?: string) => {
+    const s = normalizeStatus(status);
+    switch (s) {
+      case "ENROLLED":
+        return "Enrolled";
+      case "IN_PROGRESS":
+        return "In Progress";
+      case "COMPLETED":
+        return "Completed";
+      case "DROPPED":
+        return "Dropped";
+      case "FAILED":
+        return "Failed";
+      default:
+        return status || "Unknown";
+    }
   };
 
   if (loading) {
@@ -317,7 +356,7 @@ const EnrollmentManagement: React.FC = () => {
                   <TableCell>
                     <Chip
                       icon={getStatusIcon(enrollment.status)}
-                      label={enrollment.status}
+                      label={displayStatus(enrollment.status)}
                       color={getStatusColor(enrollment.status) as any}
                       size="small"
                     />
@@ -332,15 +371,16 @@ const EnrollmentManagement: React.FC = () => {
                       <Stack direction="row" spacing={1}>
                         <Select
                           size="small"
-                          value={enrollment.status}
+                          value={normalizeStatus(enrollment.status) || ""}
                           onChange={(e) =>
-                            handleUpdateStatus(enrollment.id!, e.target.value)
+                            handleUpdateStatus(enrollment.id!, e.target.value as string)
                           }
                         >
                           <MenuItem value="ENROLLED">Enrolled</MenuItem>
-                          <MenuItem value="ACTIVE">Active</MenuItem>
+                          <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
                           <MenuItem value="DROPPED">Dropped</MenuItem>
                           <MenuItem value="COMPLETED">Completed</MenuItem>
+                          <MenuItem value="FAILED">Failed</MenuItem>
                         </Select>
                         <IconButton
                           size="small"
@@ -448,11 +488,7 @@ const EnrollmentManagement: React.FC = () => {
                   Active Enrollments
                 </Typography>
                 <Typography variant="h4">
-                  {
-                    enrollments.filter(
-                      (e) => e.status === "ACTIVE" || e.status === "ENROLLED"
-                    ).length
-                  }
+                  {enrollments.filter((e) => normalizeStatus(e.status) === "ENROLLED").length}
                 </Typography>
               </CardContent>
             </Card>
@@ -498,7 +534,7 @@ const EnrollmentManagement: React.FC = () => {
                     <TableCell>
                       <Chip
                         icon={getStatusIcon(enrollment.status)}
-                        label={enrollment.status}
+                        label={displayStatus(enrollment.status)}
                         color={getStatusColor(enrollment.status) as any}
                         size="small"
                       />
@@ -507,15 +543,16 @@ const EnrollmentManagement: React.FC = () => {
                       <Stack direction="row" spacing={1}>
                         <Select
                           size="small"
-                          value={enrollment.status}
+                          value={normalizeStatus(enrollment.status) || ""}
                           onChange={(e) =>
-                            handleUpdateStatus(enrollment.id!, e.target.value)
+                            handleUpdateStatus(enrollment.id!, e.target.value as string)
                           }
                         >
                           <MenuItem value="ENROLLED">Enrolled</MenuItem>
-                          <MenuItem value="ACTIVE">Active</MenuItem>
+                          <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
                           <MenuItem value="DROPPED">Dropped</MenuItem>
                           <MenuItem value="COMPLETED">Completed</MenuItem>
+                          <MenuItem value="FAILED">Failed</MenuItem>
                         </Select>
                         <IconButton
                           size="small"

@@ -1446,33 +1446,54 @@ const AdminDashboard: React.FC = () => {
         <TabPanel value={tabValue} index={0}>
           {/* Analytics Tab */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Course Enrollment Chart */}
-            <Paper sx={{ p: 3, minHeight: 400 }}>
-              <Typography variant="h6" gutterBottom>
-                Course Enrollment Overview
-              </Typography>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={courseEnrollmentData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip
-                    labelFormatter={(label) => `Course: ${label}`}
-                    formatter={(value: any, name: string) => [
-                      value,
-                      name === "enrollments" ? "Enrolled" : "Capacity",
-                    ]}
-                  />
-                  <Legend />
-                  <Bar
-                    dataKey="enrollments"
-                    fill="#2196f3"
-                    name="Enrolled Students"
-                  />
-                  <Bar dataKey="capacity" fill="#ff9800" name="Capacity" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Paper>
+            {/* Top Row - Course Enrollment and Students by Department */}
+            <Box sx={{ display: "flex", gap: 3, height: 400 }}>
+              {/* Course Enrollment Chart */}
+              <Paper sx={{ p: 3, flex: 1, minHeight: 400 }}>
+                <Typography variant="h6" gutterBottom>
+                  Course Enrollment Overview
+                </Typography>
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={courseEnrollmentData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip
+                      labelFormatter={(label) => `Course: ${label}`}
+                      formatter={(value: any, name: string) => [
+                        value,
+                        name === "enrollments" ? "Enrolled" : "Capacity",
+                      ]}
+                    />
+                    <Legend />
+                    <Bar
+                      dataKey="enrollments"
+                      fill="#2196f3"
+                      name="Enrolled Students"
+                    />
+                    <Bar dataKey="capacity" fill="#ff9800" name="Capacity" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Paper>
+
+              {/* Department Distribution */}
+              {departmentData.length > 0 && (
+                <Paper sx={{ p: 3, flex: 1, minHeight: 400 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Students by Department
+                  </Typography>
+                  <ResponsiveContainer width="100%" height={320}>
+                    <BarChart data={departmentData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#4caf50" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Paper>
+              )}
+            </Box>
 
             {/* Grade Distribution Pie Chart */}
             {gradeDistributionData.some((item) => item.count > 0) && (
@@ -1500,24 +1521,6 @@ const AdminDashboard: React.FC = () => {
                     </Pie>
                     <Tooltip />
                   </PieChart>
-                </ResponsiveContainer>
-              </Paper>
-            )}
-
-            {/* Department Distribution */}
-            {departmentData.length > 0 && (
-              <Paper sx={{ p: 3, minHeight: 400 }}>
-                <Typography variant="h6" gutterBottom>
-                  Students by Department
-                </Typography>
-                <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={departmentData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#4caf50" />
-                  </BarChart>
                 </ResponsiveContainer>
               </Paper>
             )}

@@ -332,6 +332,76 @@ export const gradeAPI = {
   deleteGrade: async (id: number): Promise<void> => {
     await api.delete(`/grades/${id}`);
   },
+
+  // Student-specific methods for viewing own results
+  getMyGrades: async (): Promise<Grade[]> => {
+    // This will get grades for the currently authenticated student
+    const response: AxiosResponse<Grade[]> = await api.get("/grades/my-grades");
+    return response.data;
+  },
+
+  getMyAverageGrade: async (): Promise<number> => {
+    // This will get average grade for the currently authenticated student
+    const response: AxiosResponse<number> = await api.get("/grades/my-average");
+    return response.data;
+  },
+};
+
+// Student Results API - Dedicated methods for student grade viewing
+export const studentResultsAPI = {
+  // Get all grades for the current student
+  getMyResults: async (): Promise<Grade[]> => {
+    const response: AxiosResponse<Grade[]> = await api.get("/grades/my-grades");
+    return response.data;
+  },
+
+  // Get GPA for the current student  
+  getMyGPA: async (): Promise<number> => {
+    const response: AxiosResponse<number> = await api.get("/grades/my-average");
+    return response.data;
+  },
+
+  // Get grades for a specific course for the current student
+  getMyCourseGrades: async (courseId: number): Promise<Grade[]> => {
+    const response: AxiosResponse<Grade[]> = await api.get(`/grades/my-grades/course/${courseId}`);
+    return response.data;
+  },
+
+  // Get all enrollments for the current student
+  getMyEnrollments: async (): Promise<Enrollment[]> => {
+    const response: AxiosResponse<Enrollment[]> = await api.get("/enrollments/my-enrollments");
+    return response.data;
+  },
+};
+
+// Self-Enrollment API - Dedicated methods for student self-enrollment
+export const selfEnrollmentAPI = {
+  // Enroll in a course
+  enrollInCourse: async (courseId: number): Promise<Enrollment> => {
+    const response: AxiosResponse<Enrollment> = await api.post(
+      `/enrollments/self-enroll/${courseId}`
+    );
+    return response.data;
+  },
+
+  // Get available courses for enrollment
+  getAvailableCourses: async (): Promise<Course[]> => {
+    const response: AxiosResponse<Course[]> = await api.get("/courses/available");
+    return response.data;
+  },
+
+  // Check if student is already enrolled in a course
+  checkEnrollmentStatus: async (courseId: number): Promise<{ enrolled: boolean; enrollmentId?: number }> => {
+    const response: AxiosResponse<{ enrolled: boolean; enrollmentId?: number }> = await api.get(
+      `/enrollments/status/course/${courseId}`
+    );
+    return response.data;
+  },
+
+  // Drop from a course (if allowed)
+  dropFromCourse: async (enrollmentId: number): Promise<void> => {
+    await api.delete(`/enrollments/${enrollmentId}/drop`);
+  },
 };
 
 export default api;

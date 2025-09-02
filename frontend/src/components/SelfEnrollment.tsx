@@ -123,7 +123,7 @@ const CourseEnrollment: React.FC = () => {
   }
 
   return (
-    <Box>
+    <Box sx={{ p: 3 }}>
       {alert.show && (
         <Alert
           severity={alert.type}

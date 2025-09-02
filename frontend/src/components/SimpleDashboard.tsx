@@ -14,6 +14,8 @@ import {
   Container,
   Chip,
   LinearProgress,
+  Button,
+  Stack,
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
@@ -24,8 +26,11 @@ import {
   ExitToApp,
   MenuBook,
   TrendingUp,
+  PersonAdd,
+  GradingOutlined,
 } from "@mui/icons-material";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import type { Course } from "../types";
 import {
   courseAPI,
@@ -43,6 +48,7 @@ interface DashboardStats {
 
 const Dashboard: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [stats, setStats] = useState<DashboardStats>({
     totalCourses: 0,
@@ -174,6 +180,28 @@ const Dashboard: React.FC = () => {
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
           {isAdmin() ? "Administrator Dashboard" : "Student Dashboard"}
         </Typography>
+
+        {/* Quick Actions for Students */}
+        {!isAdmin() && (
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mb: 4 }}>
+            <Button
+              variant="contained"
+              startIcon={<PersonAdd />}
+              onClick={() => navigate("/enrollment")}
+              size="large"
+            >
+              Enroll in Courses
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<GradingOutlined />}
+              onClick={() => navigate("/grades")}
+              size="large"
+            >
+              View My Grades
+            </Button>
+          </Stack>
+        )}
 
         {/* Stats Cards */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, mb: 4 }}>

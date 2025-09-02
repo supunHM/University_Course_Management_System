@@ -234,7 +234,7 @@ const EnrollmentManagement: React.FC = () => {
     return enrollments.some(
       (enrollment) =>
         enrollment.course?.id === courseId &&
-        (normalizeStatus(enrollment.status) === "ENROLLED")
+        normalizeStatus(enrollment.status) === "ENROLLED"
     );
   };
 
@@ -373,7 +373,10 @@ const EnrollmentManagement: React.FC = () => {
                           size="small"
                           value={normalizeStatus(enrollment.status) || ""}
                           onChange={(e) =>
-                            handleUpdateStatus(enrollment.id!, e.target.value as string)
+                            handleUpdateStatus(
+                              enrollment.id!,
+                              e.target.value as string
+                            )
                           }
                         >
                           <MenuItem value="ENROLLED">Enrolled</MenuItem>
@@ -488,7 +491,11 @@ const EnrollmentManagement: React.FC = () => {
                   Active Enrollments
                 </Typography>
                 <Typography variant="h4">
-                  {enrollments.filter((e) => normalizeStatus(e.status) === "ENROLLED").length}
+                  {
+                    enrollments.filter(
+                      (e) => normalizeStatus(e.status) === "ENROLLED"
+                    ).length
+                  }
                 </Typography>
               </CardContent>
             </Card>
@@ -545,7 +552,10 @@ const EnrollmentManagement: React.FC = () => {
                           size="small"
                           value={normalizeStatus(enrollment.status) || ""}
                           onChange={(e) =>
-                            handleUpdateStatus(enrollment.id!, e.target.value as string)
+                            handleUpdateStatus(
+                              enrollment.id!,
+                              e.target.value as string
+                            )
                           }
                         >
                           <MenuItem value="ENROLLED">Enrolled</MenuItem>

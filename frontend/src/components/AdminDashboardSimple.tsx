@@ -360,8 +360,20 @@ const AdminDashboard: React.FC = () => {
           enrollments: 22,
           capacity: 30,
         },
-        { id: 3, name: "MATH101", title: "Calculus I", enrollments: 32, capacity: 35 },
-        { id: 4, name: "PHYS101", title: "Physics I", enrollments: 18, capacity: 25 },
+        {
+          id: 3,
+          name: "MATH101",
+          title: "Calculus I",
+          enrollments: 32,
+          capacity: 35,
+        },
+        {
+          id: 4,
+          name: "PHYS101",
+          title: "Physics I",
+          enrollments: 18,
+          capacity: 25,
+        },
         {
           id: 5,
           name: "ENG101",
@@ -1446,18 +1458,43 @@ const AdminDashboard: React.FC = () => {
         <TabPanel value={tabValue} index={0}>
           {/* Analytics Tab */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Top Row - Course Enrollment and Students by Department */}
-            <Box sx={{ display: "flex", gap: 3, height: 400 }}>
+            {/* Charts Container - Responsive Layout */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: 3,
+                height: { xs: "auto", md: 400 },
+              }}
+            >
               {/* Course Enrollment Chart */}
-              <Paper sx={{ p: 3, flex: 1, minHeight: 400 }}>
-                <Typography variant="h6" gutterBottom>
+              <Paper
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  flex: 1,
+                  minHeight: { xs: 300, md: 400 },
+                  width: { xs: "100%", md: "auto" },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ fontSize: { xs: "1.1rem", md: "1.25rem" } }}
+                >
                   Course Enrollment Overview
                 </Typography>
                 <ResponsiveContainer width="100%" height={320}>
                   <BarChart data={courseEnrollmentData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 12 }}
+                      interval={0}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip
                       labelFormatter={(label) => `Course: ${label}`}
                       formatter={(value: any, name: string) => [
@@ -1465,7 +1502,7 @@ const AdminDashboard: React.FC = () => {
                         name === "enrollments" ? "Enrolled" : "Capacity",
                       ]}
                     />
-                    <Legend />
+                    <Legend wrapperStyle={{ fontSize: "12px" }} />
                     <Bar
                       dataKey="enrollments"
                       fill="#2196f3"
@@ -1478,15 +1515,33 @@ const AdminDashboard: React.FC = () => {
 
               {/* Department Distribution */}
               {departmentData.length > 0 && (
-                <Paper sx={{ p: 3, flex: 1, minHeight: 400 }}>
-                  <Typography variant="h6" gutterBottom>
+                <Paper
+                  sx={{
+                    p: { xs: 2, sm: 3 },
+                    flex: 1,
+                    minHeight: { xs: 300, md: 400 },
+                    width: { xs: "100%", md: "auto" },
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ fontSize: { xs: "1.1rem", md: "1.25rem" } }}
+                  >
                     Students by Department
                   </Typography>
                   <ResponsiveContainer width="100%" height={320}>
                     <BarChart data={departmentData}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 12 }}
+                        interval={0}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis tick={{ fontSize: 12 }} />
                       <Tooltip />
                       <Bar dataKey="value" fill="#4caf50" />
                     </BarChart>
@@ -1497,8 +1552,18 @@ const AdminDashboard: React.FC = () => {
 
             {/* Grade Distribution Pie Chart */}
             {gradeDistributionData.some((item) => item.count > 0) && (
-              <Paper sx={{ p: 3, minHeight: 400 }}>
-                <Typography variant="h6" gutterBottom>
+              <Paper
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  minHeight: { xs: 350, md: 400 },
+                  width: "100%",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ fontSize: { xs: "1.1rem", md: "1.25rem" } }}
+                >
                   Grade Distribution
                 </Typography>
                 <ResponsiveContainer width="100%" height={320}>
@@ -1511,7 +1576,7 @@ const AdminDashboard: React.FC = () => {
                       label={({ name, percent }) =>
                         `${name}: ${((percent || 0) * 100).toFixed(0)}%`
                       }
-                      outerRadius={80}
+                      outerRadius={window.innerWidth < 600 ? 60 : 80}
                       fill="#8884d8"
                       dataKey="count"
                     >

@@ -355,7 +355,7 @@ export const studentResultsAPI = {
     return response.data;
   },
 
-  // Get GPA for the current student  
+  // Get GPA for the current student
   getMyGPA: async (): Promise<number> => {
     const response: AxiosResponse<number> = await api.get("/grades/my-average");
     return response.data;
@@ -363,13 +363,17 @@ export const studentResultsAPI = {
 
   // Get grades for a specific course for the current student
   getMyCourseGrades: async (courseId: number): Promise<Grade[]> => {
-    const response: AxiosResponse<Grade[]> = await api.get(`/grades/my-grades/course/${courseId}`);
+    const response: AxiosResponse<Grade[]> = await api.get(
+      `/grades/my-grades/course/${courseId}`
+    );
     return response.data;
   },
 
   // Get all enrollments for the current student
   getMyEnrollments: async (): Promise<Enrollment[]> => {
-    const response: AxiosResponse<Enrollment[]> = await api.get("/enrollments/my-enrollments");
+    const response: AxiosResponse<Enrollment[]> = await api.get(
+      "/enrollments/my-enrollments"
+    );
     return response.data;
   },
 };
@@ -386,15 +390,20 @@ export const selfEnrollmentAPI = {
 
   // Get available courses for enrollment
   getAvailableCourses: async (): Promise<Course[]> => {
-    const response: AxiosResponse<Course[]> = await api.get("/courses/available");
+    const response: AxiosResponse<Course[]> = await api.get(
+      "/courses/available"
+    );
     return response.data;
   },
 
   // Check if student is already enrolled in a course
-  checkEnrollmentStatus: async (courseId: number): Promise<{ enrolled: boolean; enrollmentId?: number }> => {
-    const response: AxiosResponse<{ enrolled: boolean; enrollmentId?: number }> = await api.get(
-      `/enrollments/status/course/${courseId}`
-    );
+  checkEnrollmentStatus: async (
+    courseId: number
+  ): Promise<{ enrolled: boolean; enrollmentId?: number }> => {
+    const response: AxiosResponse<{
+      enrolled: boolean;
+      enrollmentId?: number;
+    }> = await api.get(`/enrollments/status/course/${courseId}`);
     return response.data;
   },
 

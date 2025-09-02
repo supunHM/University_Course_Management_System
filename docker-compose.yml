@@ -1,0 +1,78 @@
+services:
+  # MySQL Database Service
+  mysql:
+    image: mysql:8.0
+    container_name: course-api-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: university
+      MYSQL_USER: courseapi
+      MYSQL_PASSWORD: courseapi123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - course-api-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-prootpassword",
+        ]
+      timeout: 20s
+      retries: 10
+
+  # Spring Boot Backend Service
+  backend:
+    build:
+      context: ./course-api
+      dockerfile: Dockerfile
+    container_name: course-api-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/university?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: courseapi
+      SPRING_DATASOURCE_PASSWORD: courseapi123
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B597033733676397924423F4528482B4D6251655468576D5A7134743777217A25432A
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8080:8080"
+    networks:
+      - course-api-network
+
+  # React Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: course-api-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_BASE_URL: http://localhost:8080/api
+    ports:
+      - "3000:3000"
+    networks:
+      - course-api-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  course-api-network:
+    driver: bridge
